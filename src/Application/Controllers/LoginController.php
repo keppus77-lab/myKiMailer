@@ -22,12 +22,13 @@ class LoginController
     }
     public  function isLoggedIn(): bool
     {
-        // Hier kannst du die Logik implementieren, um zu überprüfen, ob der Benutzer eingeloggt ist.
-        // Zum Beispiel könntest du eine Session-Variable überprüfen.
-        return false;
+			if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+				 return false;
+	}
+       return true;
     }
 
-    private function sqlSelect(string $query, string|false $format = false, mixed ...$vars)    {
+    public function sqlSelect(string $query, string|false $format = false, mixed ...$vars)    {
 		$stmt = $this->connection->prepare($query);
 		if($format) {
 			$stmt->bind_param($format, ...$vars);
@@ -41,7 +42,7 @@ class LoginController
 		return false;
 	}
 
-	private function sqlInsert(string $query, string|false $format = false, mixed ...$vars) {
+	public function sqlInsert(string $query, string|false $format = false, mixed ...$vars) {
 		$stmt = $this->connection->prepare($query);
 		if($format) {
 			$stmt->bind_param($format, ...$vars);
@@ -55,7 +56,7 @@ class LoginController
 		return -1;
 	}
 
-    private function sqlUpdate(string $query, string|false $format = false, mixed ...$vars): bool {
+    public function sqlUpdate(string $query, string|false $format = false, mixed ...$vars): bool {
 		$stmt = $this->connection->prepare($query);
 		if($format) {
 			$stmt->bind_param($format, ...$vars);
@@ -66,6 +67,10 @@ class LoginController
 		}
 		$stmt->close();
 		return false;
+	}
+  	public function connectionClose(): void {
+		$this->connection->close();
+
 	}
 
 }

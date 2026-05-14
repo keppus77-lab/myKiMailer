@@ -19,7 +19,7 @@ class Config
 
     private function __construct()
     {
-        self::loadEnv(); 
+       self::loadEnv(); 
     
        $this->host = $_ENV['DB_HOST'] ?? '';
        $this->db_name = $_ENV['DB_DATABASE'] ?? '';
