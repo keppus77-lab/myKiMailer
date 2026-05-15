@@ -27,10 +27,10 @@ class TokenController
 	}
 
 
-    private static function urlSafeEncode(String $m) {
+    public static function urlSafeEncode(String $m) {
 		return rtrim(strtr(base64_encode($m), '+/', '-_'), '=');
 	}
-	private static function urlSafeDecode(String $m) {
+	public static function urlSafeDecode(String $m) {
 		return base64_decode(strtr($m, '-_', '+/'));
 	}
 

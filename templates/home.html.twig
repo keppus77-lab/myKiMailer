@@ -3,6 +3,8 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf_token" content="{{csrf_token}}" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IMAP Search Criteria Builder</title>
     
@@ -629,6 +631,7 @@
 <body>
     <!-- ==================== LANDING PAGE ==================== -->
     <div class="landing-page" id="landingPage">
+        <div >
         <div class="particles" id="particles"></div>
         
         <div class="landing-content">
@@ -656,19 +659,20 @@
                     <div class="feature-description">Direkt verwendbarer Code</div>
                 </div>
                 
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <span class="material-icons" style="font-size: inherit;">speed</span>
+                  <div class="feature-card">
+                      <div class="feature-icon">
+                            <span class="material-icons" style="font-size: inherit;">speed</span>
+                        </div>
+                        <div class="feature-title">Schnell & Einfach</div>
+                        <div class="feature-description">Intuitive Bedienung</div>
                     </div>
-                    <div class="feature-title">Schnell & Einfach</div>
-                    <div class="feature-description">Intuitive Bedienung</div>
                 </div>
-            </div>
             
-            <button class="cta-button" onclick="startBuilder()">
-                Los geht's
-                <span class="material-icons">arrow_forward</span>
-            </button>
+                <button class="cta-button" onclick="startBuilder()">
+                   Los geht's
+                    <span class="material-icons">arrow_forward</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1218,6 +1222,150 @@
         // Initialize
         createParticles();
         updateDisplay();
+    </script>
+
+    <script>
+async function request(url, data, callback) {
+  
+    // Loader erstellen und anzeigen
+    const loader = document.createElement('div');
+    loader.className = 'loader';
+    document.body.appendChild(loader);
+
+    try {
+        // FormData vorbereiten
+        const formData = prepareFormData(data);
+  
+        // CSRF-Token hinzufügen
+        addCsrfToken(formData);
+
+        // Fetch-Request
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData
+        });
+
+        // Response-Text holen
+        const responseText = await response.text();
+        console.log(responseText);
+
+        // Callback ausführen (falls vorhanden)
+        if (callback) {
+            callback(responseText);
+        }
+
+        return responseText;
+
+    } catch (error) {
+        console.error('Request failed:', error);
+        throw error;
+
+    } finally {
+        // Loader immer entfernen (auch bei Fehler)
+        loader.remove();
+    }
+    return false;
+}
+function prepareFormData(data) {
+    if (!data) {
+        return new FormData();
+    }
+    if (data instanceof FormData) {
+        return data;
+    }
+    if (typeof data === 'string') {
+        const form = document.querySelector(data);
+        return form ? new FormData(form) : new FormData();
+    }
+    if (typeof data === 'object') {
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
+        return formData;
+    }
+    return new FormData();
+}
+
+// Hilfsfunktion: CSRF-Token hinzufÃ¼gen
+function addCsrfToken(formData) {
+    const csrfMetaTag = document.querySelector('meta[name="csrf_token"]');
+    if (csrfMetaTag) {
+        formData.append('csrf_token', csrfMetaTag.getAttribute('content'));
+    }
+}   
+function logout() {
+    
+	request('php/logout.php', '#loginForm', function(data) {
+		
+        const obj = JSON.parse(data);
+        if(obj.code){
+   
+            switch(obj.code) {
+                case '0':
+                    window.location = './';
+                    break;
+                case '1':
+                    document.getElementById('errs').innerHTML += '<div class="err">Incorrect username or password</div>';
+                    break;
+                case '2':
+                    document.getElementById('errs').innerHTML += '<div class="err">Failed to connect to database. Please try again later.</div>';
+                    break;
+                case '3':
+                    document.getElementById('errs').innerHTML += '<div class="err">You have exceeded the max number of login attempts per hour. Try again in an hour.</div>';
+                    break;
+                case '4':
+                    document.getElementById('errs').innerHTML += '<div class="err">Your email has not been validated. Please check your email for a validation link or <a href="./validate">click here</a> to send another link</div>';
+                    break;
+                default:
+                    document.getElementById('errs').innerHTML += '<div class="err">An unknown error occurred. Please try again later.</div>';
+            }
+        }
+		setTimeout(function() {
+			document.getElementById('errs').style.transition = transition;
+			document.getElementById('errs').style.opacity = 1;
+		}, 10);
+	});
+}
+
+function delete_account() {
+    
+	request('php/delete-account.php', '#loginForm', function(data) {
+		
+
+
+    document.getElementById('errs').innerHTML = "";
+		var transition = document.getElementById('errs').style.transition;
+		document.getElementById('errs').style.transition = "none";
+		document.getElementById('errs').style.opacity = 0;
+         const obj = JSON.parse(data);
+        if(obj.code){
+		    switch(obj.code) {
+			    case '0':
+				    window.location = '/';
+    				break;
+	    		case '1':
+		    		document.getElementById('errs').innerHTML += '<div class="err">Failed to delete account. Please try again later.</div>';
+			    	break;
+    			case '2':
+	    			document.getElementById('errs').innerHTML += '<div class="err">Failed to connect to database. Please try again later.</div>';
+		    		break;
+			    case '3':
+    				document.getElementById('errs').innerHTML += '<div class="err">You are not logged in.</div>';
+	    			break;
+    			case '4':
+	    			document.getElementById('errs').innerHTML += '<div class="err">Invalid CSRF Token... Nice try</div>';
+		    		break;
+    			default:
+	    			document.getElementById('errs').innerHTML += '<div class="err">An unknown error occurred. Please try again later.</div>';
+    		}
+	    	setTimeout(function() {
+		    	document.getElementById('errs').style.transition = transition;
+			    document.getElementById('errs').style.opacity = 1;
+		    }, 10);
+        }
+    });
+}
     </script>
 </body>
 </html>

@@ -821,44 +821,99 @@
             submitBtn.disabled = !allValid;
         }
 
-        // Form Submission
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            if (!submitBtn.disabled) {
-                // Get form data
-                const formData = {
-                    name: nameInput.value.trim(),
-                    email: emailInput.value.trim(),
-                    password: passwordInput.value,
-                    passwordConfirm: passwordConfirmInput.value
-                };
+        
 
-                console.log('Form Data:', formData);
+        async function request(url, data, callback) {
+  
+    // Loader erstellen und anzeigen
+    const loader = document.createElement('div');
+    loader.className = 'loader';
+    document.body.appendChild(loader);
 
-                // Here you would normally send data to server
-                // Example:
-              
-                fetch('php/register.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showSuccessModal();
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-             
+    try {
+        // FormData vorbereiten
+        const formData = prepareFormData(data);
+  
+        // CSRF-Token hinzufügen
+        addCsrfToken(formData);
 
-                // For demo: show success modal
-                showSuccessModal();
-            }
+        // Fetch-Request
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData
         });
+
+        // Response-Text holen
+        const responseText = await response.text();
+        console.log(responseText);
+
+        // Callback ausführen (falls vorhanden)
+        if (callback) {
+            callback(responseText);
+        }
+
+        return responseText;
+
+    } catch (error) {
+        console.error('Request failed:', error);
+        throw error;
+
+    } finally {
+        // Loader immer entfernen (auch bei Fehler)
+        loader.remove();
+    }
+    return false;
+}
+function prepareFormData(data) {
+    if (!data) {
+        return new FormData();
+    }
+    if (data instanceof FormData) {
+        return data;
+    }
+    if (typeof data === 'string') {
+        const form = document.querySelector(data);
+        return form ? new FormData(form) : new FormData();
+    }
+    if (typeof data === 'object') {
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
+        return formData;
+    }
+    return new FormData();
+}
+
+// Hilfsfunktion: CSRF-Token hinzufÃ¼gen
+function addCsrfToken(formData) {
+    const csrfMetaTag = document.querySelector('meta[name="csrf_token"]');
+    if (csrfMetaTag) {
+        formData.append('csrf_token', csrfMetaTag.getAttribute('content'));
+    }
+}   
+function register() {
+    
+	request('php/register.php', '#registrationForm', function(data) {
+		
+        const obj = JSON.parse(data);
+        if(obj.code){
+   
+            switch(obj.code) {
+                case '0':
+                    showSuccessModal();
+                    break;
+               
+                default:
+                    document.getElementById('errs').innerHTML += '<div class="err">An unknown error occurred. Please try again later.</div>';
+            }
+        }
+		setTimeout(function() {
+			document.getElementById('errs').style.transition = transition;
+			document.getElementById('errs').style.opacity = 1;
+		}, 10);
+	});
+}
 
         // Success Modal
         function showSuccessModal() {
