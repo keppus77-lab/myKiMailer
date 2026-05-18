@@ -1,0 +1,130 @@
+<div class="app-bar">
+            <div class="app-bar-content">
+                <div class="app-bar-left">
+                    <button class="back-button" onclick="goBack()" title="Zurück">
+                        <span class="material-icons">arrow_back</span>
+                    </button>
+                    <div>
+                        <h1>
+                            <span class="material-icons">search</span>
+                            IMAP Search Criteria Builder
+                        </h1>
+                        <p>Erstelle komplexe IMAP-Suchkriterien für PHP imap_search()</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="info-banner">
+                <span class="material-icons">info</span>
+                <div class="info-banner-text">
+                    Füge Kriterien hinzu, um deine Suchanfrage zu erstellen. Alle Kriterien werden mit AND verknüpft.
+                </div>
+            </div>
+
+            <div class="mdc-card">
+                <div class="card-header">
+                    <span class="material-icons">label</span>
+                    <h2>Aktuelle Suchkriterien</h2>
+                </div>
+                <div class="card-content">
+                    <div class="criteria-chips-container empty" id="criteriaChips">
+                        <div class="empty-state">Keine Kriterien ausgewählt</div>
+                    </div>
+                    <button class="mdc-button mdc-button--outlined" onclick="clearAll()">
+                        <span class="material-icons">delete_outline</span>
+                        Alle löschen
+                    </button>
+                </div>
+            </div>
+
+            <div class="mdc-card">
+                <div class="card-header">
+                    <span class="material-icons">tune</span>
+                    <h2>Basis-Kriterien</h2>
+                </div>
+                <div class="card-content">
+                    <div class="checkbox-grid">
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="all" onchange="toggleCriteria('ALL')">
+                            </div>
+                            <label for="all">ALL - Alle Nachrichten</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="unseen" onchange="toggleCriteria('UNSEEN')">
+                            </div>
+                            <label for="unseen">UNSEEN - Ungelesen</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="seen" onchange="toggleCriteria('SEEN')">
+                            </div>
+                            <label for="seen">SEEN - Gelesen</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="flagged" onchange="toggleCriteria('FLAGGED')">
+                            </div>
+                            <label for="flagged">FLAGGED - Markiert</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mdc-card">
+                <div class="card-header">
+                    <span class="material-icons">text_fields</span>
+                    <h2>Text-Suche</h2>
+                </div>
+                <div class="card-content">
+                    <div class="input-grid">
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>FROM - Von</label>
+                                <input type="text" id="from" placeholder='z.B. "user@example.com"'>
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addTextCriteria('FROM', 'from')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>SUBJECT - Betreff</label>
+                                <input type="text" id="subject" placeholder='z.B. "Rechnung"'>
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addTextCriteria('SUBJECT', 'subject')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mdc-card">
+                <div class="card-header">
+                    <span class="material-icons">code</span>
+                    <h2>Generierter PHP-Code</h2>
+                </div>
+                <div class="card-content">
+                    <div class="code-block">
+                        <button class="copy-button" id="copyBtn" onclick="copyToClipboard()">
+                            <span class="material-icons">content_copy</span>
+                            Kopieren
+                        </button>
+                        <code><span class="code-variable">$criteria</span> = <span class="code-string">'<span id="resultCriteria">ALL</span>'</span>;</code><br>
+                        <code><span class="code-variable">$emails</span> = <span class="code-function">imap_search</span>(<span class="code-variable">$connection</span>, <span class="code-variable">$criteria</span>);</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fab-container">
+            <button class="mdc-fab" onclick="scrollToTop('searchSection')" title="Nach oben">
+                <span class="material-icons">arrow_upward</span>
+            </button>
+        </div>

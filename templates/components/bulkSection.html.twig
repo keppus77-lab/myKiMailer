@@ -1,0 +1,151 @@
+<div class="app-bar">
+            <div class="app-bar-content">
+                <div class="app-bar-left">
+                    <button class="back-button" onclick="goBack()" title="Zurück">
+                        <span class="material-icons">arrow_back</span>
+                    </button>
+                    <div>
+                        <h1>
+                            <span class="material-icons">folder_open</span>
+                            Bulk Email Manager
+                        </h1>
+                        <p>Verwalte mehrere E-Mails gleichzeitig</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="info-banner">
+                <span class="material-icons">info</span>
+                <div class="info-banner-text">
+                    Führe Aktionen auf mehreren E-Mails gleichzeitig aus: Verschieben, Löschen, Markieren und mehr.
+                </div>
+            </div>
+
+            <div class="mdc-card">
+                <div class="card-header">
+                    <span class="material-icons">dns</span>
+                    <h2>IMAP Server Konfiguration</h2>
+                </div>
+                <div class="card-content">
+                    <div class="input-grid">
+                        <div class="mdc-text-field">
+                            <label>Server (Host)</label>
+                            <input type="text" id="bulkImapHost" placeholder="imap.gmail.com" value="imap.gmail.com">
+                        </div>
+                        <div class="mdc-text-field">
+                            <label>Port</label>
+                            <input type="number" id="bulkImapPort" placeholder="993" value="993">
+                        </div>
+                        <div class="mdc-text-field">
+                            <label>Benutzername</label>
+                            <input type="text" id="bulkImapUser" placeholder="user@example.com">
+                        </div>
+                        <div class="mdc-text-field">
+                            <label>Passwort</label>
+                            <input type="password" id="bulkImapPass" placeholder="••••••••">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mdc-card">
+                <div class="card-header">
+                    <span class="material-icons">filter_alt</span>
+                    <h2>E-Mail Auswahl</h2>
+                </div>
+                <div class="card-content">
+                    <div class="mdc-text-field">
+                        <label>Suchkriterien</label>
+                        <input type="text" id="bulkSearchCriteria" placeholder='z.B. "SEEN BEFORE 1 January 2024"' value="ALL">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mdc-card">
+                <div class="card-header">
+                    <span class="material-icons">settings</span>
+                    <h2>Aktion auswählen</h2>
+                </div>
+                <div class="card-content">
+                    <div class="checkbox-grid" style="margin-bottom: 20px;">
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="radio" name="bulkAction" id="actionMove" checked onchange="updateBulkAction()">
+                            </div>
+                            <label for="actionMove">In Ordner verschieben</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="radio" name="bulkAction" id="actionDelete" onchange="updateBulkAction()">
+                            </div>
+                            <label for="actionDelete">Löschen</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="radio" name="bulkAction" id="actionFlag" onchange="updateBulkAction()">
+                            </div>
+                            <label for="actionFlag">Als gelesen markieren</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="radio" name="bulkAction" id="actionUnflag" onchange="updateBulkAction()">
+                            </div>
+                            <label for="actionUnflag">Als ungelesen markieren</label>
+                        </div>
+                    </div>
+
+                    <div id="moveOptions">
+                        <div class="mdc-text-field">
+                            <label>Zielordner</label>
+                            <input type="text" id="targetFolder" placeholder='z.B. "INBOX.Archiv"' value="INBOX.Archive">
+                        </div>
+                    </div>
+
+                    <div id="deleteOptions" style="display: none;">
+                        <div class="info-banner" style="background: #ffebee; border-left-color: #f44336;">
+                            <span class="material-icons" style="color: #f44336;">warning</span>
+                            <div class="info-banner-text" style="color: #c62828;">
+                                <strong>Achtung:</strong> Gelöschte E-Mails können möglicherweise nicht wiederhergestellt werden!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mdc-card">
+                <div class="card-header">
+                    <span class="material-icons">code</span>
+                    <h2>Generierter PHP-Code</h2>
+                </div>
+                <div class="card-content">
+                    <div class="code-block">
+                        <button class="copy-button" onclick="copyBulkCode()">
+                            <span class="material-icons">content_copy</span>
+                            Kopieren
+                        </button>
+                        <pre id="bulkCodeOutput" style="margin: 0; white-space: pre-wrap;"><code><span class="code-variable">$connection</span> = <span class="code-function">imap_open</span>(
+    <span class="code-string">'{<span id="bulkHostOutput">imap.gmail.com</span>:<span id="bulkPortOutput">993</span>/imap/ssl}INBOX'</span>,
+    <span class="code-string">'<span id="bulkUserOutput">user@example.com</span>'</span>,
+    <span class="code-string">'<span id="bulkPassOutput">password</span>'</span>
+);
+
+<span class="code-variable">$emails</span> = <span class="code-function">imap_search</span>(<span class="code-variable">$connection</span>, <span class="code-string">'<span id="bulkCriteriaOutput">ALL</span>'</span>);
+
+<span class="code-keyword">foreach</span> (<span class="code-variable">$emails</span> <span class="code-keyword">as</span> <span class="code-variable">$emailNum</span>) {
+    <span id="bulkActionOutput"><span class="code-function">imap_mail_move</span>(<span class="code-variable">$connection</span>, (string)<span class="code-variable">$emailNum</span>, <span class="code-string">'<span id="targetFolderOutput">INBOX.Archive</span>'</span>);</span>
+}
+
+<span class="code-function">imap_expunge</span>(<span class="code-variable">$connection</span>);
+<span class="code-function">imap_close</span>(<span class="code-variable">$connection</span>);</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fab-container">
+            <button class="mdc-fab" onclick="scrollToTop('bulkSection')" title="Nach oben">
+                <span class="material-icons">arrow_upward</span>
+            </button>
+        </div>

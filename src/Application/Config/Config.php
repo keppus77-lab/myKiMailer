@@ -109,7 +109,7 @@ class Config
     
     public function get(string $key, mixed $default = null): mixed
     {
-        return $this->settings[$key] ?? $default;
+        return $_ENV[$key] ?? $default;
     }
     
     

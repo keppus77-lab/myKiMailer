@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Application\Controllers\LoginController;
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
 use Monolog\Handler\StreamHandler;
@@ -9,6 +10,7 @@ use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Monolog\Handler\RotatingFileHandler;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -24,7 +26,18 @@ return function (ContainerBuilder $containerBuilder) {
             $handler = new StreamHandler($loggerSettings['path'], $loggerSettings['level']);
             $logger->pushHandler($handler);
 
+              $errorHandler = new RotatingFileHandler(
+                __DIR__ . '/../logs/errors.log',
+                30,
+                Logger::ERROR
+            );
+            $logger->pushHandler($errorHandler);
+
             return $logger;
+        },  
+        LoginController::class => function (ContainerInterface $c) {
+            return new LoginController();
         },
+
     ]);
 };

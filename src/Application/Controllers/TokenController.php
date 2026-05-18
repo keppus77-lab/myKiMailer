@@ -14,7 +14,7 @@ class TokenController
 		return self::urlSafeEncode($hash . '|' . $seed . '|' . $t);
 	}
 
-	public static function validateToken($token): bool {
+	public static function validateToken(String $token): bool {
 		$parts = explode('|', self::urlSafeDecode($token));
 		if(count($parts) === 3) {
 			$config = Config::getInstance();
