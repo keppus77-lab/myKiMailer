@@ -128,3 +128,258 @@
                 <span class="material-icons">arrow_upward</span>
             </button>
         </div>
+
+        <!-- Speichern/Laden Buttons -->
+<div class="mdc-card">
+    <div class="card-header">
+        <span class="material-icons">save</span>
+        <h2>Query verwalten</h2>
+    </div>
+    <div class="card-content">
+        <button class="mdc-button mdc-button--raised" onclick="saveQuery()">
+            <span class="material-icons">save</span>
+            Speichern
+        </button>
+        <button class="mdc-button mdc-button--outlined" onclick="loadQueryList()">
+            <span class="material-icons">folder_open</span>
+            Laden
+        </button>
+        <button class="mdc-button mdc-button--outlined" onclick="newQuery()">
+            <span class="material-icons">add</span>
+            Neue Query
+        </button>
+    </div>
+</div>
+
+
+
+<!-- Query List Modal/Sidebar -->
+<div id="queryListContainer" style="display:none;"></div>
+
+
+        <script>
+        // Globale Variable für aktuelle Query-ID (null = neue Query)
+let currentQueryId = null;
+let currentCriteria = [];
+
+// Query speichern
+async function saveQuery() {
+    const name = prompt('Name für diese Suche:');
+    if (!name) return;
+    
+    const description = prompt('Beschreibung (optional):');
+    
+    const data = {
+        name: name,
+        description: description,
+        criteria: currentCriteria,
+        criteria_string: document.getElementById('resultCriteria').textContent,
+        csrf_token: getCsrfToken()
+    };
+    console.log(data);
+    try {
+        let url, method;
+        
+        if (currentQueryId) {
+            // Update bestehende Query
+            url = `api/imap-search/update/${currentQueryId}`;
+            method = 'PUT';
+        } else {
+            // Neue Query speichern
+            url = 'api/imap-search/save';
+            method = 'POST';
+        }
+        
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            if (result.id) {
+                currentQueryId = result.id;
+            }
+            showNotification('Erfolgreich gespeichert!', 'success');
+            loadQueryList(); // Liste aktualisieren
+        } else {
+            showNotification('Fehler beim Speichern: ' + result.error, 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('Netzwerkfehler', 'error');
+    }
+}
+
+// Query laden
+async function loadQuery(id) {
+    try {
+        const response = await fetch(`api/imap-search/load/${id}`);
+        const query = await response.json();
+        
+        if (query.error) {
+            showNotification('Fehler: ' + query.error, 'error');
+            return;
+        }
+        
+        // Aktualisiere UI
+        currentQueryId = query.id;
+        currentCriteria = query.criteria;
+        
+        // Setze alle Checkboxen und Inputs zurück
+        clearAll();
+        
+        // Lade Kriterien
+        query.criteria.forEach(criterion => {
+            if (criterion.type === 'checkbox') {
+                const checkbox = document.getElementById(criterion.id);
+                if (checkbox) {
+                    checkbox.checked = true;
+                    toggleCriteria(criterion.value);
+                }
+            } else if (criterion.type === 'text') {
+                const input = document.getElementById(criterion.inputId);
+                if (input) {
+                    input.value = criterion.inputValue;
+                    addTextCriteria(criterion.keyword, criterion.inputId);
+                }
+            }
+        });
+        
+        showNotification('Query geladen: ' + query.name, 'success');
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('Fehler beim Laden', 'error');
+    }
+}
+
+// Liste aller Queries laden
+async function loadQueryList() {
+    try {
+        const response = await fetch('api/imap-search/list');
+        const queries = await response.json();
+        
+        if (queries.error) {
+            console.error('Error loading queries:', queries.error);
+            return;
+        }
+        
+        // Zeige Liste in einem Modal/Sidebar
+        displayQueryList(queries);
+        
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Query löschen
+async function deleteQuery(id) {
+    if (!confirm('Wirklich löschen?')) return;
+    
+    try {
+        const response = await fetch(`api/imap-search/delete/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                csrf_token: getCsrfToken()
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('Gelöscht!', 'success');
+            loadQueryList();
+            
+            if (currentQueryId === id) {
+                clearAll();
+                currentQueryId = null;
+            }
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('Fehler beim Löschen', 'error');
+    }
+}
+
+// Angepasste Funktionen (speichere Kriterien in currentCriteria)
+function toggleCriteria(keyword) {
+    const checkbox = document.getElementById(keyword.toLowerCase());
+    
+    if (checkbox.checked) {
+        if (!criteria.includes(keyword)) {
+            criteria.push(keyword);
+            currentCriteria.push({
+                type: 'checkbox',
+                id: keyword.toLowerCase(),
+                value: keyword
+            });
+            addChip(keyword, keyword);
+        }
+    } else {
+        criteria = criteria.filter(c => c !== keyword);
+        currentCriteria = currentCriteria.filter(c => !(c.type === 'checkbox' && c.value === keyword));
+        removeChip(keyword);
+    }
+    
+    updateResult();
+}
+
+function addTextCriteria(keyword, inputId) {
+    const input = document.getElementById(inputId);
+    const value = input.value.trim();
+    
+    if (value) {
+        const criteriaText = `${keyword} "${value}"`;
+        criteria.push(criteriaText);
+        
+        currentCriteria.push({
+            type: 'text',
+            keyword: keyword,
+            inputId: inputId,
+            inputValue: value
+        });
+        
+        addChip(criteriaText, inputId + '_' + Date.now());
+        updateResult();
+        input.value = '';
+    }
+}
+
+// CSRF-Token holen
+function getCsrfToken() {
+    return document.querySelector('meta[name="csrf_token"]').content;
+}
+
+// Notification anzeigen
+function showNotification(message, type) {
+    // Nutze dein eigenes Notification-System
+    alert(message);
+}
+
+// Query-Liste anzeigen (Beispiel)
+function displayQueryList(queries) {
+    const html = queries.map(q => `
+        <div class="query-item">
+            <h3>${q.name}</h3>
+            <p>${q.description || ''}</p>
+            <code>${q.criteria_string}</code>
+            <button onclick="loadQuery(${q.id})">Laden</button>
+            <button onclick="deleteQuery(${q.id})">Löschen</button>
+        </div>
+    `).join('');
+    
+    // Zeige in einem Modal/Sidebar
+    document.getElementById('queryListContainer').innerHTML = html;
+}
+
+        </script>

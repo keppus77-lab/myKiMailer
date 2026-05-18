@@ -73,4 +73,10 @@ class LoginController
 
 	}
 
+	public function getConnection(): mysqli {
+		return $this->connection;
+
+	}
+
+
 }

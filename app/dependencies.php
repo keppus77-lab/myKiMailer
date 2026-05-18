@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
+use App\Application\Controllers\ImapSearchController;
 use App\Application\Controllers\LoginController;
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
+use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
+
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Monolog\Handler\RotatingFileHandler;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -38,6 +40,12 @@ return function (ContainerBuilder $containerBuilder) {
         LoginController::class => function (ContainerInterface $c) {
             return new LoginController();
         },
+        ImapSearchController::class => function (ContainerInterface $c) {
+        return new ImapSearchController(
+            new LoginController(),
+            $c->get(LoggerInterface::class)
+        );
+    },
 
     ]);
 };
