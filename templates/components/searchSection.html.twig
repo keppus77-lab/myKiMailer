@@ -16,120 +16,8 @@
         </div>
 
         <div class="container">
-            <div class="info-banner">
-                <span class="material-icons">info</span>
-                <div class="info-banner-text">
-                    Füge Kriterien hinzu, um deine Suchanfrage zu erstellen. Alle Kriterien werden mit AND verknüpft.
-                </div>
-            </div>
 
-            <div class="mdc-card">
-                <div class="card-header">
-                    <span class="material-icons">label</span>
-                    <h2>Aktuelle Suchkriterien</h2>
-                </div>
-                <div class="card-content">
-                    <div class="criteria-chips-container empty" id="criteriaChips">
-                        <div class="empty-state">Keine Kriterien ausgewählt</div>
-                    </div>
-                    <button class="mdc-button mdc-button--outlined" onclick="clearAll()">
-                        <span class="material-icons">delete_outline</span>
-                        Alle löschen
-                    </button>
-                </div>
-            </div>
 
-            <div class="mdc-card">
-                <div class="card-header">
-                    <span class="material-icons">tune</span>
-                    <h2>Basis-Kriterien</h2>
-                </div>
-                <div class="card-content">
-                    <div class="checkbox-grid">
-                        <div class="mdc-form-field">
-                            <div class="mdc-checkbox">
-                                <input type="checkbox" id="all" onchange="toggleCriteria('ALL')">
-                            </div>
-                            <label for="all">ALL - Alle Nachrichten</label>
-                        </div>
-                        <div class="mdc-form-field">
-                            <div class="mdc-checkbox">
-                                <input type="checkbox" id="unseen" onchange="toggleCriteria('UNSEEN')">
-                            </div>
-                            <label for="unseen">UNSEEN - Ungelesen</label>
-                        </div>
-                        <div class="mdc-form-field">
-                            <div class="mdc-checkbox">
-                                <input type="checkbox" id="seen" onchange="toggleCriteria('SEEN')">
-                            </div>
-                            <label for="seen">SEEN - Gelesen</label>
-                        </div>
-                        <div class="mdc-form-field">
-                            <div class="mdc-checkbox">
-                                <input type="checkbox" id="flagged" onchange="toggleCriteria('FLAGGED')">
-                            </div>
-                            <label for="flagged">FLAGGED - Markiert</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mdc-card">
-                <div class="card-header">
-                    <span class="material-icons">text_fields</span>
-                    <h2>Text-Suche</h2>
-                </div>
-                <div class="card-content">
-                    <div class="input-grid">
-                        <div>
-                            <div class="mdc-text-field">
-                                <label>FROM - Von</label>
-                                <input type="text" id="from" placeholder='z.B. "user@example.com"'>
-                            </div>
-                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addTextCriteria('FROM', 'from')">
-                                <span class="material-icons">add</span>
-                                Hinzufügen
-                            </button>
-                        </div>
-                        <div>
-                            <div class="mdc-text-field">
-                                <label>SUBJECT - Betreff</label>
-                                <input type="text" id="subject" placeholder='z.B. "Rechnung"'>
-                            </div>
-                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addTextCriteria('SUBJECT', 'subject')">
-                                <span class="material-icons">add</span>
-                                Hinzufügen
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mdc-card">
-                <div class="card-header">
-                    <span class="material-icons">code</span>
-                    <h2>Generierter PHP-Code</h2>
-                </div>
-                <div class="card-content">
-                    <div class="code-block">
-                        <button class="copy-button" id="copyBtn" onclick="copyToClipboard()">
-                            <span class="material-icons">content_copy</span>
-                            Kopieren
-                        </button>
-                        <code><span class="code-variable">$criteria</span> = <span class="code-string">'<span id="resultCriteria">ALL</span>'</span>;</code><br>
-                        <code><span class="code-variable">$emails</span> = <span class="code-function">imap_search</span>(<span class="code-variable">$connection</span>, <span class="code-variable">$criteria</span>);</code>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="fab-container">
-            <button class="mdc-fab" onclick="scrollToTop('searchSection')" title="Nach oben">
-                <span class="material-icons">arrow_upward</span>
-            </button>
-        </div>
-
-        <!-- Speichern/Laden Buttons -->
 <div class="mdc-card">
     <div class="card-header">
         <span class="material-icons">save</span>
@@ -152,15 +40,385 @@
 </div>
 
 
+            <!-- Info Banner -->
+            <div class="info-banner">
+                <span class="material-icons">info</span>
+                <div class="info-banner-text">
+                    Füge Kriterien hinzu, um deine Suchanfrage zu erstellen. Alle Kriterien werden mit AND verknüpft.
+                </div>
+            </div>
+
+            <!-- Aktuelle Kriterien -->
+            <div class="mdc-card">
+                <div class="card-header">
+                    <span class="material-icons">label</span>
+                    <h2>Aktuelle Suchkriterien</h2>
+                </div>
+                <div class="card-content">
+                    <div class="criteria-chips-container empty" id="criteriaChips">
+                        <div class="empty-state">Keine Kriterien ausgewählt</div>
+                    </div>
+                    <button class="mdc-button mdc-button--outlined" onclick="clearAll()">
+                        <span class="material-icons">delete_outline</span>
+                        Alle löschen
+                    </button>
+                </div>
+            </div>
+
+            <!-- Basis-Kriterien -->
+            <div class="mdc-card">
+                <div class="card-header">
+                    <span class="material-icons">tune</span>
+                    <h2>Basis-Kriterien</h2>
+                </div>
+                <div class="card-content">
+                    <div class="checkbox-grid">
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="all" onchange="toggleCriteria('ALL')">
+                            </div>
+                            <label for="all">ALL - Alle Nachrichten</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="recent" onchange="toggleCriteria('RECENT')">
+                            </div>
+                            <label for="recent">RECENT - Neue Nachrichten</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="old" onchange="toggleCriteria('OLD')">
+                            </div>
+                            <label for="old">OLD - Alte Nachrichten</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="new" onchange="toggleCriteria('NEW')">
+                            </div>
+                            <label for="new">NEW - Neue (nicht OLD)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status & Flags -->
+            <div class="mdc-card">
+                <div class="card-header">
+                    <span class="material-icons">flag</span>
+                    <h2>Status & Flags</h2>
+                </div>
+                <div class="card-content">
+                    <div class="checkbox-grid">
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="seen" onchange="toggleCriteria('SEEN')">
+                            </div>
+                            <label for="seen">SEEN - Gelesen</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="unseen" onchange="toggleCriteria('UNSEEN')">
+                            </div>
+                            <label for="unseen">UNSEEN - Ungelesen</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="answered" onchange="toggleCriteria('ANSWERED')">
+                            </div>
+                            <label for="answered">ANSWERED - Beantwortet</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="unanswered" onchange="toggleCriteria('UNANSWERED')">
+                            </div>
+                            <label for="unanswered">UNANSWERED - Unbeantwortet</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="deleted" onchange="toggleCriteria('DELETED')">
+                            </div>
+                            <label for="deleted">DELETED - Gelöscht</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="undeleted" onchange="toggleCriteria('UNDELETED')">
+                            </div>
+                            <label for="undeleted">UNDELETED - Nicht gelöscht</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="flagged" onchange="toggleCriteria('FLAGGED')">
+                            </div>
+                            <label for="flagged">FLAGGED - Markiert</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="unflagged" onchange="toggleCriteria('UNFLAGGED')">
+                            </div>
+                            <label for="unflagged">UNFLAGGED - Unmarkiert</label>
+                        </div>
+                        <div class="mdc-form-field">
+                            <div class="mdc-checkbox">
+                                <input type="checkbox" id="draft" onchange="toggleCriteria('DRAFT')">
+                            </div>
+                            <label for="draft">DRAFT - Entwurf</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Text-Suche -->
+            <div class="mdc-card">
+                <div class="card-header">
+                    <span class="material-icons">text_fields</span>
+                    <h2>Text-Suche</h2>
+                </div>
+                <div class="card-content">
+                    <div class="input-grid">
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>FROM - Von</label>
+                                <input type="text" id="from" placeholder='z.B. "user@example.com"'>
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addTextCriteria('FROM', 'from')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>TO - An</label>
+                                <input type="text" id="to" placeholder='z.B. "recipient@example.com"'>
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addTextCriteria('TO', 'to')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>SUBJECT - Betreff</label>
+                                <input type="text" id="subject" placeholder='z.B. "Rechnung"'>
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addTextCriteria('SUBJECT', 'subject')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>BODY - Nachrichtentext</label>
+                                <input type="text" id="body" placeholder='z.B. "wichtig"'>
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addTextCriteria('BODY', 'body')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>TEXT - Betreff oder Body</label>
+                                <input type="text" id="text" placeholder='z.B. "Keyword"'>
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addTextCriteria('TEXT', 'text')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>CC - Kopie an</label>
+                                <input type="text" id="cc" placeholder='z.B. "cc@example.com"'>
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addTextCriteria('CC', 'cc')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>BCC - Blindkopie</label>
+                                <input type="text" id="bcc" placeholder='z.B. "bcc@example.com"'>
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addTextCriteria('BCC', 'bcc')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>KEYWORD - Schlüsselwort</label>
+                                <input type="text" id="keyword" placeholder='z.B. "Important"'>
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addTextCriteria('KEYWORD', 'keyword')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Datumsfilter -->
+            <div class="mdc-card">
+                <div class="card-header">
+                    <span class="material-icons">calendar_today</span>
+                    <h2>Datumsfilter</h2>
+                </div>
+                <div class="card-content">
+                    <div class="input-grid">
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>SINCE - Seit Datum</label>
+                                <input type="date" id="since">
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addDateCriteria('SINCE', 'since')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>BEFORE - Vor Datum</label>
+                                <input type="date" id="before">
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addDateCriteria('BEFORE', 'before')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>ON - Am Datum</label>
+                                <input type="date" id="on">
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addDateCriteria('ON', 'on')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>SENTBEFORE - Gesendet vor</label>
+                                <input type="date" id="sentbefore">
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addDateCriteria('SENTBEFORE', 'sentbefore')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>SENTSINCE - Gesendet seit</label>
+                                <input type="date" id="sentsince">
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addDateCriteria('SENTSINCE', 'sentsince')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>SENTON - Gesendet am</label>
+                                <input type="date" id="senton">
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addDateCriteria('SENTON', 'senton')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Größenfilter -->
+            <div class="mdc-card">
+                <div class="card-header">
+                    <span class="material-icons">folder_open</span>
+                    <h2>Größenfilter</h2>
+                </div>
+                <div class="card-content">
+                    <div class="input-grid">
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>LARGER - Größer als (Bytes)</label>
+                                <input type="number" id="larger" placeholder="z.B. 10000">
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addSizeCriteria('LARGER', 'larger')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                        <div>
+                            <div class="mdc-text-field">
+                                <label>SMALLER - Kleiner als (Bytes)</label>
+                                <input type="number" id="smaller" placeholder="z.B. 50000">
+                            </div>
+                            <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addSizeCriteria('SMALLER', 'smaller')">
+                                <span class="material-icons">add</span>
+                                Hinzufügen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UID-Filter -->
+            <div class="mdc-card">
+                <div class="card-header">
+                    <span class="material-icons">fingerprint</span>
+                    <h2>UID-Filter</h2>
+                </div>
+                <div class="card-content">
+                    <div class="mdc-text-field">
+                        <label>UID - Nachricht mit UID</label>
+                        <input type="text" id="uid" placeholder="z.B. 1234 oder 1000:2000">
+                    </div>
+                    <button class="mdc-button mdc-button--raised mdc-button--fullwidth" onclick="addTextCriteria('UID', 'uid')">
+                        <span class="material-icons">add</span>
+                        Hinzufügen
+                    </button>
+                </div>
+            </div>
+
+            <!-- Generierter Code -->
+            <div class="mdc-card">
+                <div class="card-header">
+                    <span class="material-icons">code</span>
+                    <h2>Generierter PHP-Code</h2>
+                </div>
+                <div class="card-content">
+                    <div class="code-block">
+                        <button class="copy-button" id="copyBtn" onclick="copyToClipboard()">
+                            <span class="material-icons">content_copy</span>
+                            Kopieren
+                        </button>
+                        <code><span class="code-variable">$criteria</span> = <span class="code-string">'<span id="resultCriteria">ALL</span>'</span>;</code><br>
+                        <code><span class="code-variable">$emails</span> = <span class="code-function">imap_search</span>(<span class="code-variable">$connection</span>, <span class="code-variable">$criteria</span>);</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Action Button -->
+        <div class="fab-container">
+            <button class="mdc-fab" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Nach oben">
+                <span class="material-icons">arrow_upward</span>
+            </button>
+        </div>
+
+        <!-- Speichern/Laden Buttons -->
+
+
+
 
 <!-- Query List Modal/Sidebar -->
-<div id="queryListContainer" style="display:none;"></div>
-
-
+<div id="queryListContainer" class="query-modal-overlay"></div>
         <script>
         // Globale Variable für aktuelle Query-ID (null = neue Query)
 let currentQueryId = null;
 let currentCriteria = [];
+let criteria = [];
 
 // Query speichern
 async function saveQuery() {
@@ -172,7 +430,7 @@ async function saveQuery() {
     const data = {
         name: name,
         description: description,
-        criteria: currentCriteria,
+        criteria: JSON.stringify(currentCriteria),
         criteria_string: document.getElementById('resultCriteria').textContent,
         csrf_token: getCsrfToken()
     };
@@ -188,6 +446,7 @@ async function saveQuery() {
             // Neue Query speichern
             url = 'api/imap-search/save';
             method = 'POST';
+
         }
         
         const response = await fetch(url, {
@@ -233,6 +492,8 @@ async function loadQuery(id) {
         
         // Setze alle Checkboxen und Inputs zurück
         clearAll();
+
+        console.log(query.criteria);
         
         // Lade Kriterien
         query.criteria.forEach(criterion => {
@@ -314,7 +575,7 @@ async function deleteQuery(id) {
 // Angepasste Funktionen (speichere Kriterien in currentCriteria)
 function toggleCriteria(keyword) {
     const checkbox = document.getElementById(keyword.toLowerCase());
-    
+    alert(checkbox);
     if (checkbox.checked) {
         if (!criteria.includes(keyword)) {
             criteria.push(keyword);
@@ -367,7 +628,8 @@ function showNotification(message, type) {
 }
 
 // Query-Liste anzeigen (Beispiel)
-function displayQueryList(queries) {
+function displayQueryList_(queries) {
+    alert("werwer");
     const html = queries.map(q => `
         <div class="query-item">
             <h3>${q.name}</h3>
@@ -380,6 +642,156 @@ function displayQueryList(queries) {
     
     // Zeige in einem Modal/Sidebar
     document.getElementById('queryListContainer').innerHTML = html;
+    document.getElementById('queryListContainer').style.display = "block";
+}
+
+
+function displayQueryList(queries) {
+    const container = document.getElementById('queryListContainer');
+    
+    // Wenn keine Queries vorhanden
+    if (queries.length === 0) {
+        container.innerHTML = `
+            <div class="query-modal">
+                <div class="query-modal-header">
+                    <div class="query-modal-title">
+                        <span class="material-icons">folder_open</span>
+                        <h2>Gespeicherte Suchen</h2>
+                    </div>
+                    <button class="icon-btn close-modal" onclick="closeQueryList()">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                
+                <div class="query-modal-body">
+                    <div class="query-empty-state">
+                        <span class="material-icons">search_off</span>
+                        <h3>Keine gespeicherten Suchen</h3>
+                        <p>Erstelle deine erste Suche und speichere sie für später.</p>
+                    </div>
+                </div>
+                
+                <div class="query-modal-footer">
+                    <button class="mdc-button mdc-button--outlined" onclick="closeQueryList()">
+                        <span class="material-icons">close</span>
+                        Schließen
+                    </button>
+                </div>
+            </div>
+        `;
+    } else {
+        // Mit Queries
+        const queryItems = queries.map(q => {
+            const createdDate = new Date(q.created_at);
+            const timeAgo = getTimeAgo(createdDate);
+            
+            return `
+                <div class="query-item">
+                    <div class="query-item-icon">
+                        <span class="material-icons">search</span>
+                    </div>
+                    <div class="query-item-content">
+                        <div class="query-item-header">
+                            <h3>${escapeHtml(q.name)}</h3>
+                            <div class="query-item-meta">
+                                <small>${timeAgo}</small>
+                            </div>
+                        </div>
+                        ${q.description ? `<p class="query-item-description">${escapeHtml(q.description)}</p>` : ''}
+                        <div class="query-item-criteria">
+                            <code>${escapeHtml(q.criteria_string)}</code>
+                        </div>
+                    </div>
+                    <div class="query-item-actions">
+                        <button class="icon-btn" onclick="loadQuery(${q.id}); closeQueryList();" title="Laden">
+                            <span class="material-icons">open_in_new</span>
+                        </button>
+                        <button class="icon-btn icon-btn--danger" onclick="deleteQuery(${q.id})" title="Löschen">
+                            <span class="material-icons">delete</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        container.innerHTML = `
+            <div class="query-modal">
+                <div class="query-modal-header">
+                    <div class="query-modal-title">
+                        <span class="material-icons">folder_open</span>
+                        <h2>Gespeicherte Suchen</h2>
+                    </div>
+                    <button class="icon-btn close-modal" onclick="closeQueryList()">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                
+                <div class="query-modal-body">
+                    <div class="query-list">
+                        ${queryItems}
+                    </div>
+                </div>
+                
+                <div class="query-modal-footer">
+                    <button class="mdc-button mdc-button--outlined" onclick="closeQueryList()">
+                        <span class="material-icons">close</span>
+                        Schließen
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Modal anzeigen
+    container.classList.add('active');
+    
+    // Klick außerhalb schließt Modal
+    setTimeout(() => {
+        container.addEventListener('click', function(e) {
+            if (e.target === container) {
+                closeQueryList();
+            }
+        });
+    }, 100);
+}
+// Modal schließen
+function closeQueryList() {
+    const container = document.getElementById('queryListContainer');
+    container.classList.remove('active');
+    setTimeout(() => {
+        container.innerHTML = '';
+    }, 300);
+}
+
+// Zeit seit Erstellung berechnen
+function getTimeAgo(date) {
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
+    
+    const intervals = {
+        'Jahr': 31536000,
+        'Monat': 2592000,
+        'Woche': 604800,
+        'Tag': 86400,
+        'Stunde': 3600,
+        'Minute': 60
+    };
+    
+    for (const [name, secondsInterval] of Object.entries(intervals)) {
+        const interval = Math.floor(seconds / secondsInterval);
+        if (interval >= 1) {
+            return `vor ${interval} ${name}${interval !== 1 ? (name === 'Monat' ? 'en' : name === 'Jahr' ? 'en' : 'n') : ''}`;
+        }
+    }
+    
+    return 'gerade eben';
+}
+
+// XSS-Schutz
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
         </script>

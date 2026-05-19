@@ -1,6 +1,6 @@
 <script>
-        let criteria = [];
-        let currentSection = null;
+        let currentSection = [];
+        
 
         // ==================== LANDING PAGE ====================
         
@@ -57,33 +57,33 @@
             const chipsContainer = document.getElementById('criteriaChips');
             const resultElement = document.getElementById('resultCriteria');
 
-            if (criteria.length === 0) {
+            if (currentCriteria.length === 0) {
                 chipsContainer.innerHTML = '<div class="empty-state">Keine Kriterien ausgewählt</div>';
                 chipsContainer.classList.add('empty');
                 resultElement.textContent = 'ALL';
             } else {
                 chipsContainer.classList.remove('empty');
-                chipsContainer.innerHTML = criteria.map((c, index) => 
+                chipsContainer.innerHTML = currentCriteria.map((c, index) => 
                     `<div class="mdc-chip">
                         ${c}
                         <span class="material-icons" onclick="removeCriteria(${index})">close</span>
                     </div>`
                 ).join('');
-                resultElement.textContent = criteria.join(' ');
+                resultElement.textContent = currentCriteria.join(' ');
             }
         }
 
-        function toggleCriteria(criterion) {
-            const index = criteria.indexOf(criterion);
+        function toggleCriteria_(criterion) {
+            const index = currentCriteria.indexOf(criterion);
             if (index > -1) {
-                criteria.splice(index, 1);
+                currentCriteria.splice(index, 1);
             } else {
-                criteria.push(criterion);
+                currentCriteria.push(criterion);
             }
             updateDisplay();
         }
 
-        function addTextCriteria(type, inputId) {
+        function addTextCriteria_(type, inputId) {
             const input = document.getElementById(inputId);
             const value = input.value.trim();
             
@@ -93,35 +93,35 @@
             }
 
             const criterion = `${type} "${value}"`;
-            criteria.push(criterion);
+            currentCriteria.push(criterion);
             input.value = '';
             updateDisplay();
         }
 
-        function removeCriteria(index) {
-            const removedCriterion = criteria[index];
+        function removeCriteria_(index) {
+            const removedCriterion = currentCriteria[index];
             const checkboxId = removedCriterion.toLowerCase().split(' ')[0];
             const checkbox = document.getElementById(checkboxId);
             if (checkbox) {
                 checkbox.checked = false;
             }
 
-            criteria.splice(index, 1);
+            currentCriteria.splice(index, 1);
             updateDisplay();
         }
 
-        function clearAll() {
-            if (criteria.length === 0) return;
+        function clearAll_() {
+            if (currentCriteria.length === 0) return;
             
             if (confirm('Alle Kriterien löschen?')) {
                 document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-                criteria = [];
+                currentCriteria = [];
                 updateDisplay();
             }
         }
 
         function copyToClipboard() {
-            const text = criteria.length > 0 ? criteria.join(' ') : 'ALL';
+            const text = currentCriteria.length > 0 ? currentCriteria.join(' ') : 'ALL';
             navigator.clipboard.writeText(text).then(() => {
                 const btn = document.getElementById('copyBtn');
                 const icon = btn.querySelector('.material-icons');
@@ -139,102 +139,13 @@
             });
         }
 
-        // ==================== SUBJECT CHANGER ====================
-
-        function updateSubjectMode() {
-            document.getElementById('prefixMode').style.display = 
-                document.getElementById('modePrefix').checked ? 'block' : 'none';
-            document.getElementById('replaceMode').style.display = 
-                document.getElementById('modeReplace').checked ? 'block' : 'none';
-            document.getElementById('customMode').style.display = 
-                document.getElementById('modeCustom').checked ? 'block' : 'none';
-            updateSubjectCodeOutput();
-        }
-
-        function updateSubjectCodeOutput() {
-            const host = document.getElementById('imapHost').value || 'imap.gmail.com';
-            const port = document.getElementById('imapPort').value || '993';
-            const user = document.getElementById('imapUser').value || 'user@example.com';
-            const pass = document.getElementById('imapPass').value || 'password';
-            const criteria = document.getElementById('subjectSearchCriteria').value || 'ALL';
-
-            document.getElementById('hostOutput').textContent = host;
-            document.getElementById('portOutput').textContent = port;
-            document.getElementById('userOutput').textContent = user;
-            document.getElementById('passOutput').textContent = pass;
-            document.getElementById('criteriaOutput').textContent = criteria;
-        }
-
-        // Update on input change
-        ['imapHost', 'imapPort', 'imapUser', 'imapPass', 'subjectSearchCriteria'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.addEventListener('input', updateSubjectCodeOutput);
-        });
-
-        function copySubjectCode() {
-            const code = document.getElementById('subjectCodeOutput').textContent;
-            navigator.clipboard.writeText(code).then(() => {
-                alert('Code kopiert!');
-            });
-        }
-
-        // ==================== BULK MANAGER ====================
-
-        function updateBulkAction() {
-            document.getElementById('moveOptions').style.display = 
-                document.getElementById('actionMove').checked ? 'block' : 'none';
-            document.getElementById('deleteOptions').style.display = 
-                document.getElementById('actionDelete').checked ? 'block' : 'none';
-            updateBulkCodeOutput();
-        }
-
-        function updateBulkCodeOutput() {
-            const host = document.getElementById('bulkImapHost').value || 'imap.gmail.com';
-            const port = document.getElementById('bulkImapPort').value || '993';
-            const user = document.getElementById('bulkImapUser').value || 'user@example.com';
-            const pass = document.getElementById('bulkImapPass').value || 'password';
-            const criteria = document.getElementById('bulkSearchCriteria').value || 'ALL';
-            const targetFolder = document.getElementById('targetFolder').value || 'INBOX.Archive';
-
-            document.getElementById('bulkHostOutput').textContent = host;
-            document.getElementById('bulkPortOutput').textContent = port;
-            document.getElementById('bulkUserOutput').textContent = user;
-            document.getElementById('bulkPassOutput').textContent = pass;
-            document.getElementById('bulkCriteriaOutput').textContent = criteria;
-            document.getElementById('targetFolderOutput').textContent = targetFolder;
-
-            let actionCode = '';
-            if (document.getElementById('actionMove').checked) {
-                actionCode = `<span class="code-function">imap_mail_move</span>(<span class="code-variable">$connection</span>, (string)<span class="code-variable">$emailNum</span>, <span class="code-string">'${targetFolder}'</span>);`;
-            } else if (document.getElementById('actionDelete').checked) {
-                actionCode = `<span class="code-function">imap_delete</span>(<span class="code-variable">$connection</span>, <span class="code-variable">$emailNum</span>);`;
-            } else if (document.getElementById('actionFlag').checked) {
-                actionCode = `<span class="code-function">imap_setflag_full</span>(<span class="code-variable">$connection</span>, (string)<span class="code-variable">$emailNum</span>, <span class="code-string">'\\\\Seen'</span>);`;
-            } else if (document.getElementById('actionUnflag').checked) {
-                actionCode = `<span class="code-function">imap_clearflag_full</span>(<span class="code-variable">$connection</span>, (string)<span class="code-variable">$emailNum</span>, <span class="code-string">'\\\\Seen'</span>);`;
-            }
-
-            document.getElementById('bulkActionOutput').innerHTML = actionCode;
-        }
-
-        // Update on input change
-        ['bulkImapHost', 'bulkImapPort', 'bulkImapUser', 'bulkImapPass', 'bulkSearchCriteria', 'targetFolder'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.addEventListener('input', updateBulkCodeOutput);
-        });
-
-        function copyBulkCode() {
-            const code = document.getElementById('bulkCodeOutput').textContent;
-            navigator.clipboard.writeText(code).then(() => {
-                alert('Code kopiert!');
-            });
-        }
+      
 
         // ==================== INITIALIZE ====================
         
         createParticles();
         updateDisplay();
-        updateSubjectCodeOutput();
+       // updateSubjectCodeOutput();
         updateBulkCodeOutput();
     </script>
     
@@ -301,15 +212,14 @@ function prepareFormData(data) {
     return new FormData();
 }
 
-// Hilfsfunktion: CSRF-Token hinzufÃ¼gen
+// Hilfsfunktion: CSRF-Token hinzufügen
 function addCsrfToken(formData) {
     const csrfMetaTag = document.querySelector('meta[name="csrf_token"]');
     if (csrfMetaTag) {
         formData.append('csrf_token', csrfMetaTag.getAttribute('content'));
     }
 }   
-function logout() {
-    
+function logout() {    
 	request('php/logout.php', '#loginForm', function(data) {
 		
         const obj = JSON.parse(data);

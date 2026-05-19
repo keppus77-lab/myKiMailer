@@ -51,7 +51,7 @@ class ImapSearchController
             
             return $id;
             
-        } catch (\PDOException $e) {
+        } catch (\mysqli_sql_exception $e) {
             $this->logger->error('Fehler beim Speichern der IMAP Query', [
                 'error' => $e->getMessage()
             ]);

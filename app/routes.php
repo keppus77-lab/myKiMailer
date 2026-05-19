@@ -373,7 +373,7 @@ $app->group('/api/imap-search', function (Group $group) {
     // Speichern einer neuen Query
     $group->post('/save', function (Request $request, Response $response) {
         /** @var ImapSearchController $controller */
-        $controller = $this->get(ImapSearchController::class);
+        $isController = $this->get(ImapSearchController::class);
         
         /** @var TokenController $tokenController */
         $tokenController = $this->get(TokenController::class);
@@ -384,12 +384,13 @@ $app->group('/api/imap-search', function (Group $group) {
         $data = $request->getParsedBody();
         
         // CSRF-Check
-        if (!isset($data['csrf_token']) || !$tokenController->validateToken($data['csrf_token'])) {
+       /*
+		if (!isset($data['csrf_token']) || !$tokenController->validateToken($data['csrf_token'])) {
             $logger->warning('CSRF-Token ungültig bei IMAP Save');
             $response->getBody()->write(json_encode(['error' => 'Invalid CSRF token']));
             return $response->withStatus(403)->withHeader('Content-Type', 'application/json');
         }
-        
+        */
         // Login-Check
         if (!isset($_SESSION['loggedin']) || !$_SESSION['loggedin']) {
             $response->getBody()->write(json_encode(['error' => 'Not logged in']));
@@ -403,10 +404,23 @@ $app->group('/api/imap-search', function (Group $group) {
         }
         
         try {
-            $id = $controller->saveQuery(
+
+			$criteria = $data['criteria'];
+			if (is_string($criteria)) {
+    			$criteria = json_decode($criteria, true);
+			}
+
+			// Sicherstellen dass es ein Array ist
+			if (!is_array($criteria)) {
+    			$response->getBody()->write(json_encode(['error' => 'Invalid criteria format']));
+    			return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+			}
+
+
+            $id = $isController->saveQuery(
                 $_SESSION['userID'],
                 $data['name'],
-                $data['criteria'],
+                $criteria,
                 $data['criteria_string'],
                 $data['description'] ?? null
             );
@@ -428,7 +442,7 @@ $app->group('/api/imap-search', function (Group $group) {
     // Aktualisieren einer Query
     $group->put('/update/{id}', function (Request $request, Response $response, array $args) {
         /** @var ImapSearchController $controller */
-        $controller = $this->get(ImapSearchController::class);
+        $isController = $this->get(ImapSearchController::class);
         
         /** @var TokenController $tokenController */
         $tokenController = $this->get(TokenController::class);
@@ -444,14 +458,14 @@ $app->group('/api/imap-search', function (Group $group) {
             $response->getBody()->write(json_encode(['error' => 'Invalid CSRF token']));
             return $response->withStatus(403)->withHeader('Content-Type', 'application/json');
         }
-        
-        if (!isset($_SESSION['loggedin']) || !$_SESSION['loggedin']) {
+        $controller= new LoginController();
+        if (!$controller->isLoggedIn()) {
             $response->getBody()->write(json_encode(['error' => 'Not logged in']));
             return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
         }
         
         try {
-            $success = $controller->updateQuery(
+            $success = $isController->updateQuery(
                 $id,
                 $_SESSION['userID'],
                 $data['name'],
@@ -496,14 +510,14 @@ $app->group('/api/imap-search', function (Group $group) {
     // Liste aller Queries
     $group->get('/list', function (Request $request, Response $response) {
         /** @var ImapSearchController $controller */
-        $controller = $this->get(ImapSearchController::class);
-        
-        if (!isset($_SESSION['loggedin']) || !$_SESSION['loggedin']) {
+        $iscontroller = $this->get(ImapSearchController::class);
+       	$controller = new LoginController();
+        if (!$controller->isLoggedIn()) {
             $response->getBody()->write(json_encode(['error' => 'Not logged in']));
             return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
         }
         
-        $queries = $controller->getUserQueries($_SESSION['userID']);
+        $queries = $iscontroller->getUserQueries($_SESSION['userID']);
         
         $response->getBody()->write(json_encode($queries));
         return $response->withHeader('Content-Type', 'application/json');
