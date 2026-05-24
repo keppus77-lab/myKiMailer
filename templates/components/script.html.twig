@@ -28,17 +28,11 @@
          
             // Deactivate all sections
             document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
-            
+            selector = section+"Section";
             // Activate selected section
-            if (section === 'search') {
-                document.getElementById('searchSection').classList.add('active');
-            } else if (section === 'subject') {
-                document.getElementById('subjectSection').classList.add('active');
-            } else if (section === 'bulk') {
-                document.getElementById('bulkSection').classList.add('active');
-            } else if (section === 'navi') {
-                document.getElementById('naviSection').classList.add('active');
-            }
+            if (document.getElementById(selector)){
+                document.getElementById(selector).classList.add('active');
+            } 
         }
 
         function goBack() {

@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Application\Controllers;
 
 
-use mysqli;
+
 use Psr\Log\LoggerInterface;
 
 class ImapSearchController
 {
     private LoginController $cl;
     private LoggerInterface $logger;
-    private Mysqli $mysqli;
+    private \mysqli $mysqli;
     
     public function __construct( LoginController $cl, LoggerInterface $logger)
     {

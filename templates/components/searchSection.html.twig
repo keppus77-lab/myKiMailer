@@ -32,7 +32,7 @@
             <span class="material-icons">folder_open</span>
             Laden
         </button>
-        <button class="mdc-button mdc-button--outlined" onclick="newQuery()">
+        <button class="mdc-button mdc-button--outlined" onclick="clearAll()">
             <span class="material-icons">add</span>
             Neue Query
         </button>
@@ -613,6 +613,103 @@ function addTextCriteria(keyword, inputId) {
         addChip(criteriaText, inputId + '_' + Date.now());
         updateResult();
         input.value = '';
+    }
+}
+
+// Chip hinzufügen
+function addChip(text, id) {
+    const container = document.getElementById('criteriaChips');
+    
+    // Empty state entfernen
+    container.classList.remove('empty');
+    const emptyState = container.querySelector('.empty-state');
+    if (emptyState) {
+        emptyState.remove();
+    }
+    
+    // Chip erstellen
+    const chip = document.createElement('div');
+    chip.className = 'mdc-chip';
+    chip.dataset.criteriaId = id;
+    chip.innerHTML = `
+        ${text}
+        <span class="material-icons" onclick="removeCriteriaById('${id}')">close</span>
+    `;
+    
+    container.appendChild(chip);
+}
+
+// Chip entfernen (nach ID)
+function removeCriteriaById(id) {
+    // Aus DOM entfernen
+    const chip = document.querySelector(`[data-criteria-id="${id}"]`);
+    if (chip) {
+        const text = chip.textContent.replace('close', '').trim();
+        chip.remove();
+        
+        // Aus criteria-Array entfernen
+        criteria = criteria.filter(c => c !== text && !c.includes(text));
+        
+        // Aus currentCriteria entfernen
+        currentCriteria = currentCriteria.filter(c => {
+            if (c.type === 'checkbox') {
+                return c.value !== id && c.id !== id;
+            } else if (c.type === 'text') {
+                return c.uniqueId !== id;
+            }
+            return true;
+        });
+        
+        // Checkbox deaktivieren falls vorhanden
+        const checkbox = document.getElementById(id);
+        if (checkbox) {
+            checkbox.checked = false;
+        }
+        
+        // Empty state anzeigen wenn leer
+        const container = document.getElementById('criteriaChips');
+        if (container.children.length === 0) {
+            container.classList.add('empty');
+            container.innerHTML = '<div class="empty-state">Keine Kriterien ausgewählt</div>';
+        }
+        
+        updateResult();
+    }
+}
+
+// Alte removeChip-Funktion (für Checkbox-Kompatibilität)
+function removeChip(keyword) {
+    removeCriteriaById(keyword);
+}
+
+// Alle Kriterien löschen
+function clearAll() {
+    criteria = [];
+    currentCriteria = [];
+    currentQueryId = null;
+    
+    // Alle Checkboxen deaktivieren
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+    
+    // Alle Inputs leeren
+    document.querySelectorAll('.mdc-text-field input').forEach(input => input.value = '');
+    
+    // Chips-Container zurücksetzen
+    const container = document.getElementById('criteriaChips');
+    container.classList.add('empty');
+    container.innerHTML = '<div class="empty-state">Keine Kriterien ausgewählt</div>';
+    
+    updateResult();
+}
+
+// Ergebnis aktualisieren
+function updateResult() {
+    const resultElement = document.getElementById('resultCriteria');
+    
+    if (criteria.length === 0) {
+        resultElement.textContent = 'ALL';
+    } else {
+        resultElement.textContent = criteria.join(' ');
     }
 }
 

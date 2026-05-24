@@ -11,8 +11,11 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Roboto Font -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-        {% include 'components/css.html.twig' %}
-
+        <style>
+        {% include 'styles/css.html.twig' %}
+        {% include 'styles/cssAccountsSection.html.twig' %}
+        
+        </style>
     
 </head>
 <body>
@@ -36,9 +39,13 @@
     <!-- ==================== SECTION 3: BULK MANAGER ==================== -->
     <div class="app-section" id="bulkSection">
      {% include 'components/bulkSection.html.twig' %}
-        
     </div>
-    
+
+
+    <!-- ==================== SECTION 4: IMAP Account settings  ==================== -->    
+    <div class="app-section" id="accountsSection">
+     {% include 'components/imapCredentials.html.twig' %}
+    </div>
    
     {% include 'components/script.html.twig' %}
 </body>

@@ -84,13 +84,10 @@ class ValidateAction extends Action
 			
 		}
 		else {
-				return $view->render($this->response, 'validate.html.twig', [
-          'title'=>'Email Verification',
-		  'csrf_token' => $this->token	
-    ]);
-
-
+			return $view->render($this->response, 'validate.html.twig', [
+                'title'=>'Email Verification',
+		        'csrf_token' => $this->token	
+            ]);
 		}
-
     }
 }
