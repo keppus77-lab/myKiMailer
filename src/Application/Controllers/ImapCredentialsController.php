@@ -330,7 +330,7 @@ class ImapCredentialsController {
           * @param array $data Zu aktualisierende Felder (email, host, port, username, password)
      * @return bool Erfolg
      */
-    public function updateAccount(int $userId, array $data): bool 
+    public function updateAccount(int $userId, int $accountId, array $data): bool 
     {
         $existing = $this->getAccountsByUser($userId);
         if (!$existing) {
@@ -386,6 +386,7 @@ class ImapCredentialsController {
         
         $updates[] = 'updated_at = NOW()';
     
+        $params[] = $accountId;
         $params[] = $userId;
         $types .= 'ii';
         
@@ -397,8 +398,7 @@ class ImapCredentialsController {
         if (!$stmt) {
             throw new Exception('Prepare fehlgeschlagen: ' . $this->mysqli->error);
         }
-        
-        // PHP 8.1+: Spread-Operator mit execute()
+       
         $stmt->execute([$types, ...$params]);
         
         $affectedRows = $stmt->affected_rows;
@@ -488,31 +488,49 @@ class ImapCredentialsController {
         if (!$account) {
             return ['success' => false, 'message' => 'Account nicht gefunden'];
         }
-        
         try {
          
             // IMAP-Verbindung aufbauen
             $mailbox = sprintf(
-                '{%s:%d/imap%s}INBOX',
+                '{%s:%d/imap%s%s}INBOX',
                 $account['imap_host'],
                 $account['imap_port'],
-                ($account['use_ssl']===1) ? '/ssl' : ''
+                ($account['use_ssl']==1) ? '/ssl' : '',
+                '/novalidate-cert' 
             );
-           
-
+          
+            imap_timeout(IMAP_OPENTIMEOUT, 15);
+            imap_timeout(IMAP_READTIMEOUT, 15);
+    
+            // Alte Fehler löschen
+            @imap_errors();
+            @imap_alerts();
+            
+            // Verbindungsversuch
 
             $imap = @imap_open(
                 $mailbox,
                 $account['imap_username'],
-                $account['imap_password']
+                $account['imap_password'],
+                0,
+                1
             );
-            print_r($imap);
-            
+                        
             if ($imap === false) {
-                $error = imap_last_error();
+
+                $lastError = imap_last_error();
+                $errors = imap_errors();
+                
+                if ($lastError) {
+                   echo "   Fehler: $lastError\n";
+                }
+                
+                if ($errors) {
+                    echo "   Details: " . implode(', ', $errors) . "\n";
+                }
                 return [
                     'success' => false, 
-                    'message' => 'Verbindung fehlgeschlagen: ' . $error
+                    'message' => 'Verbindung fehlgeschlagen: ' . $lastError. ' - '.implode(', ', $errors)
                 ];
             }
             

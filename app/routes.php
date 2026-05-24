@@ -229,6 +229,51 @@ $app->post('/php/logout_[.php]', function (Request $request, Response $response)
 	});
 	$app->get('/test[.php]', function (Request $request, Response $response) {
 
+
+// Test 1: Socket-Verbindung
+echo "=== Port 993 Test ===\n";
+
+$host = 'imap.gmx.net';
+$port = 993;
+$timeout = 10;
+
+$socket = @fsockopen($host, $port, $errno, $errstr, $timeout);
+
+if ($socket) {
+    echo "✅ Port 993 ist OFFEN und erreichbar\n";
+    fclose($socket);
+} else {
+    echo "❌ Port 993 ist BLOCKIERT oder nicht erreichbar\n";
+    echo "Fehler: $errstr ($errno)\n";
+}
+
+// Test 2: IMAP-Extension verfügbar?
+echo "\n=== IMAP Extension Test ===\n";
+if (function_exists('imap_open')) {
+    echo "✅ PHP IMAP Extension ist installiert\n";
+} else {
+    echo "❌ PHP IMAP Extension ist NICHT installiert\n";
+    echo "Bitte aktiviere 'extension=imap' in der php.ini\n";
+}
+
+// Test 3: OpenSSL verfügbar?
+echo "\n=== OpenSSL Test ===\n";
+if (extension_loaded('openssl')) {
+    echo "✅ OpenSSL Extension ist geladen\n";
+} else {
+    echo "❌ OpenSSL Extension ist NICHT geladen\n";
+}
+
+// Test 4: Alle geladenen Extensions
+echo "\n=== Geladene Extensions ===\n";
+$extensions = get_loaded_extensions();
+echo "Relevante: " . implode(', ', array_filter($extensions, function($ext) {
+    return in_array(strtolower($ext), ['imap', 'openssl', 'sockets']);
+})) . "\n";
+
+
+	imap_timeout(IMAP_OPENTIMEOUT, 30);
+imap_timeout(IMAP_READTIMEOUT, 30);
 		// Konfiguration
 		$config = [
 			'smtp_host' => 'smtp.gmail.com',
@@ -622,7 +667,7 @@ $app->post('/php/logout_[.php]', function (Request $request, Response $response)
 
 		});
 
-	$group->get('/test/{id}', function (Request $request, Response $response, array $args) {
+		$group->get('/test/{id}', function (Request $request, Response $response, array $args) {
  			$controller = new LoginController();
 		
 			$id = (int) $args['id'];
@@ -640,6 +685,45 @@ $app->post('/php/logout_[.php]', function (Request $request, Response $response)
 			return $response->withHeader('Content-Type', 'application/json');
 
 		});
-	});
+	
+    	$group->get('/get/{id}', function (Request $request, Response $response, array $args) {
+ 			$controller = new LoginController();
+		
+			$id = (int) $args['id'];
+			
+			$logger = $this->get(LoggerInterface::class);
+			$imapCredantialController = new ImapCredentialsController($controller, $logger);
+			if (!$controller->isLoggedIn()) {
+				$response->getBody()->write(json_encode(['error' => 'Not logged in']));
+				return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
+			}
+			$account = $imapCredantialController->getAccount($_SESSION['userID'], $id);
+			
+		
+			$response->getBody()->write(json_encode($account));
+			return $response->withHeader('Content-Type', 'application/json');
 
+		});
+
+			
+    	$group->put('/update/{id}', function (Request $request, Response $response, array $args) {
+ 			$controller = new LoginController();
+		
+			$id = (int) $args['id'];
+			$data = $request->getParsedBody();
+			$logger = $this->get(LoggerInterface::class);
+			$imapCredantialController = new ImapCredentialsController($controller, $logger);
+			if (!$controller->isLoggedIn()) {
+				$response->getBody()->write(json_encode(['error' => 'Not logged in']));
+				return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
+			}
+			$update = $imapCredantialController->updateAccount($_SESSION['userID'], $id, $data);
+
+			
+		
+			$response->getBody()->write(json_encode($update));
+			return $response->withHeader('Content-Type', 'application/json');
+
+		});
+	});
 };
