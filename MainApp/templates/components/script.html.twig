@@ -1,0 +1,315 @@
+<script>
+        let currentSection = [];
+        
+
+        // ==================== LANDING PAGE ====================
+        
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        function openSection(section) {
+            currentSection = section;
+            
+            
+             if(section !== 'navi'){
+               document.getElementById('landingPage').classList.add('slide-out');
+             }
+         
+            // Deactivate all sections
+            document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+            selector = section+"Section";
+            // Activate selected section
+            if (document.getElementById(selector)){
+                document.getElementById(selector).classList.add('active');
+            } 
+        }
+
+        function goBack() {
+            document.getElementById('landingPage').classList.remove('slide-out', 'slide-out-navi');
+            document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+            currentSection = null;
+        }
+
+        function scrollToTop(sectionId) {
+            document.getElementById(sectionId).scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // ==================== SEARCH BUILDER ====================
+
+        function updateDisplay() {
+            const chipsContainer = document.getElementById('criteriaChips');
+            const resultElement = document.getElementById('resultCriteria');
+
+            if (currentCriteria.length === 0) {
+                chipsContainer.innerHTML = '<div class="empty-state">Keine Kriterien ausgewählt</div>';
+                chipsContainer.classList.add('empty');
+                resultElement.textContent = 'ALL';
+            } else {
+                chipsContainer.classList.remove('empty');
+                chipsContainer.innerHTML = currentCriteria.map((c, index) => 
+                    `<div class="mdc-chip">
+                        ${c}
+                        <span class="material-icons" onclick="removeCriteria(${index})">close</span>
+                    </div>`
+                ).join('');
+                resultElement.textContent = currentCriteria.join(' ');
+            }
+        }
+
+        function toggleCriteria_(criterion) {
+            const index = currentCriteria.indexOf(criterion);
+            if (index > -1) {
+                currentCriteria.splice(index, 1);
+            } else {
+                currentCriteria.push(criterion);
+            }
+            updateDisplay();
+        }
+
+        function addTextCriteria_(type, inputId) {
+            const input = document.getElementById(inputId);
+            const value = input.value.trim();
+            
+            if (!value) {
+                alert('Bitte geben Sie einen Wert ein!');
+                return;
+            }
+
+            const criterion = `${type} "${value}"`;
+            currentCriteria.push(criterion);
+            input.value = '';
+            updateDisplay();
+        }
+
+        function removeCriteria_(index) {
+            const removedCriterion = currentCriteria[index];
+            const checkboxId = removedCriterion.toLowerCase().split(' ')[0];
+            const checkbox = document.getElementById(checkboxId);
+            if (checkbox) {
+                checkbox.checked = false;
+            }
+
+            currentCriteria.splice(index, 1);
+            updateDisplay();
+        }
+
+        function clearAll_() {
+            if (currentCriteria.length === 0) return;
+            
+            if (confirm('Alle Kriterien löschen?')) {
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+                currentCriteria = [];
+                updateDisplay();
+            }
+        }
+
+        function copyToClipboard() {
+            const text = currentCriteria.length > 0 ? currentCriteria.join(' ') : 'ALL';
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copyBtn');
+                const icon = btn.querySelector('.material-icons');
+                const originalText = btn.childNodes[2].textContent;
+                
+                icon.textContent = 'check';
+                btn.childNodes[2].textContent = 'Kopiert!';
+                btn.classList.add('copied');
+                
+                setTimeout(() => {
+                    icon.textContent = 'content_copy';
+                    btn.childNodes[2].textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+      
+
+        // ==================== INITIALIZE ====================
+        
+        createParticles();
+        updateDisplay();
+       // updateSubjectCodeOutput();
+        updateBulkCodeOutput();
+    </script>
+    
+    <script>
+    async function request(url, data, callback) {
+  
+        // Loader erstellen und anzeigen
+        const loader = document.createElement('div');
+        loader.className = 'loader';
+        document.body.appendChild(loader);
+
+        try {
+            // FormData vorbereiten
+            const formData = prepareFormData(data);
+    
+            // CSRF-Token hinzufügen
+            addCsrfToken(formData);
+
+            // Fetch-Request
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData
+            });
+
+            // Response-Text holen
+            const responseText = await response.text();
+            console.log(responseText);
+
+            // Callback ausführen (falls vorhanden)
+            if (callback) {
+                callback(responseText);
+            }
+
+            return responseText;
+
+        } catch (error) {
+            console.error('Request failed:', error);
+            throw error;
+
+        } finally {
+            // Loader immer entfernen (auch bei Fehler)
+            loader.remove();
+        }
+        return false;
+    }
+
+    function prepareFormData(data) {
+        if (!data) {
+            return new FormData();
+        }
+        if (data instanceof FormData) {
+            return data;
+        }
+        if (typeof data === 'string') {
+            const form = document.querySelector(data);
+            return form ? new FormData(form) : new FormData();
+        }
+        if (typeof data === 'object') {
+            const formData = new FormData();
+            Object.entries(data).forEach(([key, value]) => {
+                formData.append(key, value);
+            });
+            return formData;
+        }
+        return new FormData();
+    }
+
+    // Hilfsfunktion: CSRF-Token hinzufügen
+    function addCsrfToken(formData) {
+        const csrfMetaTag = document.querySelector('meta[name="csrf_token"]');
+        if (csrfMetaTag) {
+            formData.append('csrf_token', csrfMetaTag.getAttribute('content'));
+        }
+    }   
+    function logout() {    
+        request('api/v1/auth/logout', '#loginForm', function(data) {
+            
+            const obj = JSON.parse(data);
+            if(obj.code){
+    
+                switch(obj.code) {
+                    case '0':
+                        window.location = './';
+                        break;
+                    case '1':
+                        document.getElementById('errs').innerHTML += '<div class="err">Incorrect username or password</div>';
+                        break;
+                    case '2':
+                        document.getElementById('errs').innerHTML += '<div class="err">Failed to connect to database. Please try again later.</div>';
+                        break;
+                    case '3':
+                        document.getElementById('errs').innerHTML += '<div class="err">You have exceeded the max number of login attempts per hour. Try again in an hour.</div>';
+                        break;
+                    case '4':
+                        document.getElementById('errs').innerHTML += '<div class="err">Your email has not been validated. Please check your email for a validation link or <a href="./validate">click here</a> to send another link</div>';
+                        break;
+                    default:
+                        document.getElementById('errs').innerHTML += '<div class="err">An unknown error occurred. Please try again later.</div>';
+                }
+            }
+            setTimeout(function() {
+                document.getElementById('errs').style.transition = transition;
+                document.getElementById('errs').style.opacity = 1;
+            }, 10);
+        });
+    }
+
+    function delete_account() {
+        
+        request('api/v1/auth/delete-account', '#loginForm', function(data) {
+            
+
+
+        document.getElementById('errs').innerHTML = "";
+            var transition = document.getElementById('errs').style.transition;
+            document.getElementById('errs').style.transition = "none";
+            document.getElementById('errs').style.opacity = 0;
+            const obj = JSON.parse(data);
+            if(obj.code){
+                switch(obj.code) {
+                    case '0':
+                        window.location = '/';
+                        break;
+                    case '1':
+                        document.getElementById('errs').innerHTML += '<div class="err">Failed to delete account. Please try again later.</div>';
+                        break;
+                    case '2':
+                        document.getElementById('errs').innerHTML += '<div class="err">Failed to connect to database. Please try again later.</div>';
+                        break;
+                    case '3':
+                        document.getElementById('errs').innerHTML += '<div class="err">You are not logged in.</div>';
+                        break;
+                    case '4':
+                        document.getElementById('errs').innerHTML += '<div class="err">Invalid CSRF Token... Nice try</div>';
+                        break;
+                    default:
+                        document.getElementById('errs').innerHTML += '<div class="err">An unknown error occurred. Please try again later.</div>';
+                }
+                setTimeout(function() {
+                    document.getElementById('errs').style.transition = transition;
+                    document.getElementById('errs').style.opacity = 1;
+                }, 10);
+            }
+        });
+    }
+
+    const burgerBtn = document.getElementById('burgerBtn');
+        const menu = document.getElementById('menu');
+        const overlay = document.getElementById('overlay');
+
+        // Toggle Menu
+        function toggleMenu() {
+            burgerBtn.classList.toggle('active');
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            // Verhindere Scrollen wenn Menu offen ist
+            if (menu.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Close Menu
+        function closeMenu() {
+            burgerBtn.classList.remove('active');
+            menu.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+    </script>

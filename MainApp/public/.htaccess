@@ -1,0 +1,31 @@
+Options All -Indexes
+
+<Files .htaccess>
+order allow,deny
+deny from all
+</Files>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Redirect to HTTPS
+  # RewriteCond %{HTTPS} off
+  # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # RewriteBase falls in Subdirectory
+  # RewriteBase /
+
+  # WICHTIG: /account PHYSISCH ausliefern (vor allen anderen Regeln!)
+  # Wenn /account existiert, überspringe alle weiteren Regeln
+  RewriteCond %{REQUEST_URI} ^/account(/.*)?$
+  RewriteRule ^ - [L]
+
+  # Determine the RewriteBase automatically
+  RewriteCond %{REQUEST_URI}::$1 ^(/.+)/(.*)::\2$
+  RewriteRule ^(.*) - [E=BASE:%1]
+
+  # SLIM: Alle nicht-existierenden Dateien zu index.php
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index2.php [QSA,L]
+</IfModule>

@@ -6,14 +6,21 @@ deny from all
 </Files>
 
 <IfModule mod_rewrite.c>
-  # Redirect to the public folder
   RewriteEngine On
   # RewriteBase /
-  RewriteRule ^$ public/ [L]
-  RewriteRule (.*) public/index.php [L]
 
-  # Redirect to HTTPS
-  # RewriteEngine On
+  # Redirect to HTTPS (optional - auskommentiert lassen wenn nicht gebraucht)
   # RewriteCond %{HTTPS} off
   # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  RewriteRule ^.*auth.*$ LoginApp/public/index.php [L,QSA]
+
+  RewriteRule ^.*imap-search.*$ MainApp/public/index.php [L,QSA]
+  RewriteRule ^.*imap-accounts.*$ MainApp/public/index.php [L,QSA]
+
+  RewriteRule ^$ MainApp/public/index.php [L]
+  RewriteRule ^index\.(php|html) MainApp/public/index.php [L]
+
+  # Alle anderen Requests zu public/index.php
+  RewriteRule ^(.*)$ LoginApp/public/index.php [L]
 </IfModule>

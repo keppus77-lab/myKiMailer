@@ -1,0 +1,29 @@
+Options All -Indexes
+
+<Files .htaccess>
+order allow,deny
+deny from all
+</Files>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # RewriteBase /
+
+  # Redirect to HTTPS (optional - auskommentiert lassen wenn nicht gebraucht)
+  # RewriteCond %{HTTPS} off
+  # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # ========================================
+  # 1. /account AUSSCHLIESSEN (ZUERST!)
+  # ========================================
+  # Wenn /account aufgerufen wird, STOPPE hier - keine Weiterleitung zu public/
+
+  # ========================================
+  # 2. SLIM im /public/ Ordner
+  # ========================================
+  # Wenn ROOT aufgerufen wird, gehe zu public/
+  RewriteRule ^$ public/ [L]
+
+  # Alle anderen Requests zu public/index.php
+  RewriteRule ^(.*)$ public/index.php [L]
+</IfModule>

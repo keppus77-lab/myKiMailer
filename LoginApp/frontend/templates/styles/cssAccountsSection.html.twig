@@ -1,0 +1,394 @@
+/* =============================================================
+   IMAP Accounts - Additional CSS Styles
+   Füge diese Styles zu deiner bestehenden styles.css hinzu
+   ============================================================= */
+
+/* Provider-Auswahl Grid */
+.provider-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.provider-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    font-size: 14px;
+    gap: 8px;
+}
+
+.provider-button:hover {
+    border-color: #1976d2;
+    background: #f5f5f5;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.provider-button.active {
+    border-color: #1976d2;
+    background: #e3f2fd;
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+.provider-icon {
+    font-size: 32px;
+    line-height: 1;
+}
+
+/* Form Sections */
+.form-section {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.form-section:last-child {
+    border-bottom: none;
+}
+
+.form-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #424242;
+}
+
+.form-section h3 .material-icons {
+    font-size: 20px;
+    color: #1976d2;
+}
+
+/* Password Field with Toggle */
+.mdc-text-field {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.password-toggle:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+.password-toggle .material-icons {
+    font-size: 20px;
+    color: #757575;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+}
+
+/* Account List */
+.account-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.account-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.account-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-color: #1976d2;
+}
+
+.account-item-icon {
+    font-size: 40px;
+    line-height: 1;
+    min-width: 40px;
+    text-align: center;
+}
+
+.account-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.account-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.account-item-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #212121;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.account-item-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.account-item-badge .material-icons {
+    font-size: 16px;
+}
+
+.badge-success {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.badge-warning {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.account-item-description {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #616161;
+}
+
+.account-item-description .material-icons {
+    font-size: 16px;
+    color: #9e9e9e;
+}
+
+.provider-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    margin-left: 8px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #616161;
+}
+
+.account-item-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.account-item-meta small {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #9e9e9e;
+}
+
+.account-item-meta .material-icons {
+    font-size: 14px;
+}
+
+.account-item-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Icon Buttons */
+.icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #e0e0e0;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.icon-btn .material-icons {
+    font-size: 20px;
+    color: #616161;
+}
+
+.icon-btn:hover {
+    background: #f5f5f5;
+    border-color: #1976d2;
+}
+
+.icon-btn:hover .material-icons {
+    color: #1976d2;
+}
+
+.icon-btn--danger:hover {
+    background: #ffebee;
+    border-color: #d32f2f;
+}
+
+.icon-btn--danger:hover .material-icons {
+    color: #d32f2f;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: #9e9e9e;
+}
+
+.empty-state .material-icons {
+    font-size: 64px;
+    color: #e0e0e0;
+    margin-bottom: 16px;
+}
+
+.empty-state h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #616161;
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 14px;
+    color: #9e9e9e;
+}
+
+/* Info Banner Varianten */
+.info-banner--success {
+    background: #e8f5e9;
+    border-left-color: #4caf50;
+}
+
+.info-banner--success .material-icons {
+    color: #4caf50;
+}
+
+.info-banner--error {
+    background: #ffebee;
+    border-left-color: #f44336;
+}
+
+.info-banner--error .material-icons {
+    color: #f44336;
+}
+
+.info-banner--warning {
+    background: #fff3e0;
+    border-left-color: #ff9800;
+}
+
+.info-banner--warning .material-icons {
+    color: #ff9800;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .provider-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .account-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .account-item-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .mdc-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .provider-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .account-item-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Loading State */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e0e0e0;
+    border-top-color: #1976d2;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Disabled State */
+button:disabled,
+.mdc-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Focus States für Accessibility */
+.provider-button:focus-visible,
+.icon-btn:focus-visible,
+.mdc-button:focus-visible {
+    outline: 2px solid #1976d2;
+    outline-offset: 2px;
+}
+
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid #1976d2;
+    outline-offset: 2px;
+}

@@ -1,0 +1,48 @@
+{% import 'macros/ui.html.twig' as ui %}
+
+<div class="particles" id="particles"></div>
+        
+       <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+    
+        
+        <!-- Burger Button -->
+        <button class="burger-btn" id="burgerBtn" onclick="toggleMenu()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <!-- Slide-Out Menu -->
+    {% include 'components/navi.html.twig' %}
+    
+        
+        <div class="landing-content">
+            <div class="landing-icon">
+                <span class="material-icons" style="font-size: inherit;">email</span>
+            </div>
+            
+            <h1 class="landing-title">KI Email Manager</h1>
+            <p class="landing-subtitle">Professionelle E-Mail-Verwaltung mit Hilfe von KI mit nur wenigen Klicks</p>
+            
+            
+            <div class="landing-features">
+                <!-- Feature 1: Search Builder -->
+                  {{ ui.feature_card('search', 'Search Builder', 'Erstelle komplexe IMAP-Suchkriterien visuell mit Filtern für Status, Datum, Größe und mehr', 'search') }}
+               
+                <!-- Feature 2: Subject Changer -->
+                  {{ ui.feature_card('edit', 'Subject Change', 'Ändere E-Mail-Betreffe direkt im Postfach mit flexiblen Such- und Ersetzungsoptionen', 'subject') }}
+               
+                <!-- Feature 3: Bulk Manager -->
+                 {{ ui.feature_card('folder_open', 'Bulk Manager', 'Verwalte mehrere E-Mails gleichzeitig: Verschieben, Löschen, Markieren und mehr', 'bulk') }}
+               
+
+  <!-- Feature 4: Bulk Manager -->
+                 {{ ui.feature_card('folder_open', 'tese', 'Verwalte mehrere E-Mails gleichzeitig: Verschieben, Löschen, Markieren und mehr', 'accounts') }}
+               
+                
+            </div>
+        </div>
