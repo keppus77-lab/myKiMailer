@@ -119,7 +119,7 @@
             </div>
 
             <!-- Submit Button -->
-            <button onclick="register();" class="submit-btn" id="submitBtn" disabled>
+            <button onclick="register();return false;" class="submit-btn" id="submitBtn" disabled>
                 Jetzt registrieren
             </button>
         </form>
@@ -506,7 +506,7 @@ function addCsrfToken(formData) {
 }   
 function register() {
     
-	request('php/register.php', '#registrationForm', function(data) {
+	request('{{request_url}}/register', '#registrationForm', function(data) {
 		
         const obj = JSON.parse(data);
         if(obj.code){

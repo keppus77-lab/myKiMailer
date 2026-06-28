@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1); 
+
 namespace LoginApp\Application\Controllers;
 
 use LoginApp\Application\Controllers\LoginController;

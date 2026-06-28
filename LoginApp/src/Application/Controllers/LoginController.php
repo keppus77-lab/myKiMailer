@@ -1,35 +1,40 @@
 <?php
-
 namespace LoginApp\Application\Controllers;
 
-use mysqli;
-use LoginApp\Application\Config\Config;
+use LoginApp\Application\Container\ServiceContainer;
+use LoginApp\Application\UseCases\LoginUseCase;
+use LoginApp\Application\UseCases\CheckAuthenticationUseCase;
+use LoginApp\Application\UseCases\LogoutUseCase;
 
-
-class LoginController
-{
+class LoginController {
     
-    public static function isLoggedIn(): bool
-    {
-		if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-				 return false;
-		}
-    	return true;
+    private ServiceContainer $container;
+
+    public function __construct() {
+        $this->container = ServiceContainer::getInstance();
     }
 
-     public static function login(string $username, string $password): bool
-	 {
-		$db = new DbController();
-		$res = $db->sqlSelect("SELECT id, password FROM users WHERE username = ?", "s", $username);
-		if($res && $res->num_rows > 0) {
-			$row = $res->fetch_assoc();
-			if(password_verify($password, $row['password'])) {
-				$_SESSION['loggedin'] = true;
-				$_SESSION['userid'] = $row['id'];
-				return true;
-			}
-		}
-		return false;
-	 }
+    public static function isLoggedIn(): bool {
+        $container = ServiceContainer::getInstance();
+        $useCase = $container->get(CheckAuthenticationUseCase::class);
+        return $useCase->execute();
+    }
 
+    public static function login(string $username, string $password): bool {
+        $container = ServiceContainer::getInstance();
+        $useCase = $container->get(LoginUseCase::class);
+        return $useCase->execute($username, $password);
+    }
+
+    public static function logout(): void {
+        $container = ServiceContainer::getInstance();
+        $useCase = $container->get(LogoutUseCase::class);
+        $useCase->execute();
+    }
+
+    public static function getCurrentUserId(): ?int {
+        $container = ServiceContainer::getInstance();
+        $useCase = $container->get(CheckAuthenticationUseCase::class);
+        return $useCase->getCurrentUserId();
+    }
 }
