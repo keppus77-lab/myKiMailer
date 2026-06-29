@@ -14,7 +14,8 @@ class Config
     private string $db_password;  
     private string $db_port;
     private string $csrf_token_secret;
-    private string $auth_path;  
+    private string $auth_path;
+    private string $jwt_secret;  
     private array $settings = [];
 
 
@@ -29,6 +30,7 @@ class Config
        $this->db_port = $_ENV['DB_PORT'] ?? '3306';      
        $this->csrf_token_secret = $_ENV['CSRF_TOKEN_SECRET'] ?? '';
        $this->auth_path = $_ENV['AUTH_PATH'] ?? '';
+       $this->jwt_secret = $_ENV['JWT_SECRET'] ?? '';
        $this->settings = [
            'DB_HOST' => $this->host,
            'DB_DATABASE' => $this->db_name,
@@ -36,7 +38,8 @@ class Config
            'DB_PASSWORD' => $this->db_password,
            'DB_PORT' => $this->db_port,
            'CSRF_TOKEN_SECRET' => $this->csrf_token_secret, 
-           'AUTH_PATH' => $this->auth_path
+           'AUTH_PATH' => $this->auth_path,
+           'JWT_SECRET' => $this->jwt_secret
        ];
     }
      /**

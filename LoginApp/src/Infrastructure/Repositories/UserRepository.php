@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace LoginApp\Infrastructure\Repositories;
 
 use LoginApp\Domain\Repositories\UserRepositoryInterface;
@@ -15,9 +18,9 @@ class UserRepository implements UserRepositoryInterface {
 
     public function findByUsername(string $username): ?User {
         $result = $this->database->select(
-            'SELECT id, username, password, name, email, verified FROM users WHERE username = ?',
+            'SELECT id, password, name, email, verified FROM users WHERE name = ?',
             's',
-            $username
+            $name
         );
 
         if (!$result || $result->num_rows === 0) {
@@ -32,7 +35,7 @@ class UserRepository implements UserRepositoryInterface {
 
     public function findById(int $id): ?User {
         $result = $this->database->select(
-            'SELECT id, username, password, name, email, verified FROM users WHERE id = ?',
+            'SELECT id, name, password, email, verified FROM users WHERE id = ?',
             'i',
             $id
         );
@@ -49,7 +52,7 @@ class UserRepository implements UserRepositoryInterface {
 
     public function findByEmail(string $email): ?User {
         $result = $this->database->select(
-            'SELECT id, username, password, name, email, verified FROM users WHERE email = ?',
+            'SELECT id, password, name, email, verified FROM users WHERE email = ?',
             's',
             $email
         );
@@ -63,10 +66,10 @@ class UserRepository implements UserRepositoryInterface {
 
         return $this->mapRowToUser($row);
     }
-
+                    
     public function findByEmailWithRequestCount(string $email, int $sinceTimestamp): ?array {
         $result = $this->database->select(
-            'SELECT users.id, username, password, name, email, verified, COUNT(requests.id) as request_count 
+            'SELECT users.id, password, name, email, verified, COUNT(requests.id) as request_count 
              FROM users 
              LEFT JOIN requests ON users.id = requests.user AND type=0 AND timestamp>? 
              WHERE email=? 
@@ -88,6 +91,50 @@ class UserRepository implements UserRepositoryInterface {
             'request_count' => (int)$row['request_count']
         ];
     }
+                    
+    public function findByEmailWithLoginAttempts(string $email, int $sinceTimestamp): ?array {
+        // DEBUG: Query anzeigen
+        $query = 'SELECT users.id, password, name, email, verified, COUNT(loginattempts.id) as attempt_count 
+            FROM users 
+            LEFT JOIN loginattempts ON users.id = loginattempts.user AND loginattempts.timestamp > ? 
+            WHERE email = ? 
+            GROUP BY users.id';
+        
+        error_log('=== findByEmailWithLoginAttempts Debug ===');
+        error_log('Query: ' . $query);
+        error_log('Email: ' . $email);
+        error_log('Since Timestamp: ' . $sinceTimestamp);
+        
+        try {
+            $result = $this->database->select(
+                $query,
+                'is',
+                $sinceTimestamp,
+                $email
+            );
+
+            error_log('Result: ' . var_export($result, true));
+
+            if (!$result || $result->num_rows !== 1) {
+                error_log('No result or multiple results');
+                return null;
+            }
+
+            $row = $result->fetch_assoc();
+            error_log('Row data: ' . json_encode($row));
+            
+            $result->free_result();
+
+            return [
+                'user' => $this->mapRowToUser($row),
+                'attempt_count' => (int)$row['attempt_count']
+            ];
+        } catch (\Exception $e) {
+            error_log('Exception in findByEmailWithLoginAttempts: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
 
     public function create(string $name, string $email, string $passwordHash): int {
         return $this->database->insert(

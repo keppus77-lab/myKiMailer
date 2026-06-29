@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace LoginApp\Infrastructure\Repositories;
 
 use LoginApp\Domain\Repositories\EmailVerificationRequestRepositoryInterface;

@@ -9,6 +9,7 @@ use LoginApp\Domain\ValueObjects\UserSession;
 interface SessionManagerInterface {
     public function start(): void;
     public function destroy(): void;
+    public function clear(): void;
     public function get(string $key): mixed;
     public function set(string $key, mixed $value): void;
     public function has(string $key): bool;

@@ -1,15 +1,17 @@
 <?php
+
+declare(strict_types=1);
+
 namespace LoginApp\Infrastructure\Database;
 
 use mysqli;
-use mysqli_result;
 use LoginApp\Application\Config\Config;
 
 class MySQLDatabase implements DatabaseInterface {
     
     private mysqli $connection;
 
-    public function __construct(?mysqli $connection = null) {
+    public function __construct(?\mysqli $connection = null) {
         if ($connection) {
             $this->connection = $connection;
         } else {
@@ -20,13 +22,23 @@ class MySQLDatabase implements DatabaseInterface {
     private function connect(): void {
         $config = Config::getInstance();
         
-        $this->connection = new mysqli(
+
+        error_log('=== MySQLDatabase Connection Debug ===');
+        error_log('DB_HOST: ' . $config->get('DB_HOST'));   
+        error_log('DB_USERNAME: ' . $config->get('DB_USERNAME'));
+        error_log('DB_PASSWORD: ' . $config->get('DB_PASSWORD'));
+        error_log('DB_DATABASE: ' . $config->get('DB_DATABASE'));
+
+        $this->connection = new \mysqli(
             $config->get('DB_HOST'),
-            $config->get('DB_USER'),
+            $config->get('DB_USERNAME'),
             $config->get('DB_PASSWORD'),
-            $config->get('DB_NAME'),
+            $config->get('DB_DATABASE'),
             $config->get('DB_PORT')
+            
+
         );
+       
 
         if ($this->connection->connect_error) {
             throw new \RuntimeException('Database connection failed: ' . $this->connection->connect_error);
@@ -35,7 +47,7 @@ class MySQLDatabase implements DatabaseInterface {
         $this->connection->set_charset('utf8mb4');
     }
 
-    public function select(string $query, string $types = '', ...$params): ?mysqli_result {
+    public function select(string $query, string $types = '', ...$params): ?\mysqli_result {
         $stmt = $this->connection->prepare($query);
         
         if (!$stmt) {

@@ -16,14 +16,26 @@ class CsrfTokenService implements CsrfTokenServiceInterface {
     }
 
     public function validateToken(string $token): bool {
+
+        error_log('=== CSRF Validation Debug ===');
+        error_log('Token from request: ' . $token);
+
         $sessionToken = $this->sessionManager->get('csrf_token');
+        error_log('Token from session: ' . var_export($sessionToken, true));
+        error_log('Session has csrf_token: ' . var_export($this->sessionManager->has('csrf_token'), true));
+        
         
         if (!$sessionToken) {
+            error_log('No session token found!');
             return false;
         }
 
         // Use hash_equals to prevent timing attacks
-        return hash_equals($sessionToken, $token);
+           $result = hash_equals($sessionToken, $token);
+        error_log('Validation result: ' . var_export($result, true));
+        error_log('=== End Debug ===');
+        
+        return $result;
     }
 
     public function generateToken(): string {

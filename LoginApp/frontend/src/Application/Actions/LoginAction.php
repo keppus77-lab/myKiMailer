@@ -4,48 +4,66 @@ declare(strict_types=1);
 
 namespace LoginAppFrontend\Application\Actions;
 
-use LoginAppFrontend\Application\Actions\Action;
-use LoginApp\Application\Controllers\DbController;
-use Psr\Http\Message\ResponseInterface as Response;
-
-use LoginApp\Application\Controllers\LoginController;
-use LoginApp\Application\Controllers\TokenController;
+use LoginApp\Application\Container\ServiceContainer;
+use LoginApp\Application\UseCases\CheckAuthenticationUseCase;
+use LoginApp\Domain\Services\CsrfTokenServiceInterface;
 use LoginApp\Application\Config\Config;
+use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
-
-
 use Slim\Views\Twig;
-
 
 class LoginAction extends Action
 {
-
- private DbController $db;
+    private ServiceContainer $container;
+    protected Config $config;
     
-     public function __construct(LoggerInterface $logger, DbController $db)
+    public function __construct(LoggerInterface $logger)
     {
         parent::__construct($logger);
-       $this->db = $db;
+        $this->container = ServiceContainer::getInstance();
+        $this->config = Config::getInstance();
     }
+
     /**
      * {@inheritdoc}
      */
     protected function action(): Response
     {        
-        if(LoginController::isLoggedIn()) {
-            return $this->response
-                ->withHeader('Location', './') // ← Angepasst
-                ->withStatus(302);
+        // Check if user is already logged in
+        if ($this->isUserLoggedIn()) {
+            return $this->redirectToDashboard();
         }
         
+        // Render login form
+        return $this->renderLoginForm();
+    }
+
+    private function isUserLoggedIn(): bool
+    {
+        $checkAuthUseCase = $this->container->get(CheckAuthenticationUseCase::class);
+        return $checkAuthUseCase->execute();
+    }
+
+    private function redirectToDashboard(): Response
+    {
+        $dashboardUrl = $this->config->get('DASHBOARD_URL') ?? './';
         
-        $token = TokenController::createToken();
+        return $this->response
+            ->withHeader('Location', $dashboardUrl)
+            ->withStatus(302);
+    }
+
+    private function renderLoginForm(): Response
+    {
+        $csrfService = $this->container->get(CsrfTokenServiceInterface::class);
+        $token = $csrfService->generateToken();
+        
         $view = Twig::fromRequest($this->request);
-       
+        
         return $view->render($this->response, 'login.html.twig', [
             'csrf_token' => $token,
-            'request_url' => Config::getInstance()->get('AUTH_PATH')
+            'request_url' => $this->config->get('AUTH_PATH'),
+            'page_title' => 'Login'
         ]);
-        return $this->response;
     }
 }
