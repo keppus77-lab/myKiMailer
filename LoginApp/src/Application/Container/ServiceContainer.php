@@ -145,8 +145,7 @@ class ServiceContainer {
         };
 
         $this->services[LoginWithJwtUseCase::class] = function() {
-     
-            return new LoginWithJwtUseCase(
+                return new LoginWithJwtUseCase(
                 $this->get(LoginService::class),
                 $this->get(JwtServiceInterface::class),
                 $this->get(CsrfTokenServiceInterface::class),
