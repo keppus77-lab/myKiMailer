@@ -29,6 +29,8 @@ return array(
     'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'MainApp\\' => array($baseDir . '/src'),
+    'MainAppFrontend\\' => array($baseDir . '/frontend/src'),
+    'MainAppBackend\\' => array($baseDir . '/backend/src'),
     'Laravel\\SerializableClosure\\' => array($vendorDir . '/laravel/serializable-closure/src'),
     'JanGregor\\Prophecy\\' => array($vendorDir . '/jangregor/phpstan-prophecy/src'),
     'Invoker\\' => array($vendorDir . '/php-di/invoker/src'),

@@ -64,6 +64,8 @@ class ComposerStaticInit62d60de4b802ec31b840b9197e947981
         array (
             'Monolog\\' => 8,
             'MainApp\\' => 8,
+            'MainAppFrontend\\' => 16,
+            'MainAppBackend\\' => 15,
         ),
         'L' =>
         array (
@@ -188,6 +190,14 @@ class ComposerStaticInit62d60de4b802ec31b840b9197e947981
         'MainApp\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
+        ),
+        'MainAppFrontend\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/frontend/src',
+        ),
+        'MainAppBackend\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/backend/src',
         ),
         'Laravel\\SerializableClosure\\' =>
         array (

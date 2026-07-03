@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MainApp\Application\Actions;
 
+use MainApp\Application\Actions\Action ; 
 use MainApp\Application\Container\ServiceContainer;
 use MainApp\Application\UseCases\CheckAuthenticationUseCase;
 use MainApp\Domain\Services\CsrfTokenServiceInterface;

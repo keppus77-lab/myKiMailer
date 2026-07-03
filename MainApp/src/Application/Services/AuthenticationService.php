@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace MainApp\Domain\Services;
+namespace MainApp\Application\Services;
 
 use MainApp\Domain\Entities\User;
-use MainApp\Domain\ValueObjects\Credentials;
 use MainApp\Domain\Repositories\UserRepositoryInterface;
+use MainApp\Domain\Services\AuthenticationException;
+use MainApp\Domain\ValueObjects\Credentials;
 
 class AuthenticationService {
     

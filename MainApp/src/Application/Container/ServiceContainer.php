@@ -3,19 +3,30 @@
 
 namespace MainApp\Application\Container;
 
+use MainApp\Application\Config\Config;
+use MainApp\Application\Services\AuthenticationService;
 use MainApp\Application\Services\CookieManagerInterface;
 use MainApp\Application\Services\SessionManagerInterface;
-use MainApp\Application\UseCases\LogoutUseCase;
 use MainApp\Application\UseCases\CheckAuthenticationUseCase;
+use MainApp\Application\UseCases\CreateImapAccountUseCase;
 
+use MainApp\Application\UseCases\GetUserImapAccountsUseCase;
+use MainApp\Application\UseCases\LogoutUseCase;
+use MainApp\Application\UseCases\UpdateImapAccountUseCase;
+use MainApp\Domain\Repositories\ImapAccountRepositoryInterface;
 use MainApp\Domain\Repositories\UserRepositoryInterface;
-use MainApp\Infrastructure\Services\AuthenticationService;
 use MainApp\Domain\Services\CsrfTokenServiceInterface;
+use MainApp\Domain\Services\PasswordEncryptionServiceInterface;
+use MainApp\Infrastructure\Database\DatabaseInterface;
+use MainApp\Infrastructure\Database\MySQLDatabase;
+use MainApp\Infrastructure\Repositories\ImapAccountRepository;
+use MainApp\Infrastructure\Services\AesPasswordEncryptionService;
 use MainApp\Infrastructure\Services\CsrfTokenService;
 use MainApp\Infrastructure\Services\PhpCookieManager;
-
 use MainApp\Infrastructure\Services\PhpSessionManager;
-use MainApp\Application\Config\Config;
+
+use MainApp\Application\UseCases\DeleteImapAccountUseCase;
+
 
 class ServiceContainer {
     
@@ -60,7 +71,9 @@ class ServiceContainer {
             );
         };
 
-
+        $this->services[DatabaseInterface::class] = function() {
+            return new MySQLDatabase();
+        };
 
         $this->services[LogoutUseCase::class] = function() {
             return new LogoutUseCase(
@@ -75,6 +88,31 @@ class ServiceContainer {
             );
         };
 
+        // IMAP Account Repository
+        $this->services[ImapAccountRepositoryInterface::class] = function() {
+            return new ImapAccountRepository(
+                $this->get(DatabaseInterface::class)
+            );
+        };
+
+        // IMAP Account Use Cases
+        $this->services[GetUserImapAccountsUseCase::class] = function() {
+            return new GetUserImapAccountsUseCase(
+                $this->get(ImapAccountRepositoryInterface::class)
+            );
+        };
+
+        $this->services[PasswordEncryptionServiceInterface::class] = function() {
+            return new AesPasswordEncryptionService(
+                $this->config->get('ENCRYPTION_KEY') ?? 'your-32-character-secret-key-here-change-me!'
+            );
+        };
+
+        $this->services[DeleteImapAccountUseCase::class] = function() {
+            return new DeleteImapAccountUseCase(
+                $this->get(ImapAccountRepositoryInterface::class)
+            );
+        };
 
     }
 

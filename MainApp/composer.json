@@ -49,7 +49,9 @@
     },
     "autoload": {
         "psr-4": {
-            "MainApp\\": "src/"
+            "MainApp\\": "src/",
+            "MainAppFrontend\\": "frontend/src/",
+            "MainAppBackend\\": "backend/src/"
         }
     },
     "autoload-dev": {

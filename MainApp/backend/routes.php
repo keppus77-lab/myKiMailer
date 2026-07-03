@@ -3,18 +3,20 @@
 declare(strict_types=1);
 
 
+use MainAppBackend\Application\Actions\DeleteImapAccountAction;
+use MainApp\Application\Config\Config;
 use MainApp\Application\Controllers\DbController;
 use MainApp\Application\Controllers\ImapCredentialsController;
 use MainApp\Application\Controllers\ImapSearchController;
 use MainApp\Application\Controllers\LoginController;
 use MainApp\Application\Controllers\TokenController;
+use MainApp\Application\Middleware\JwtMiddleware;
+use MainAppBackend\Application\Actions\GetImapAccountsAction;
 use Psr\Log\LoggerInterface;
 use Slim\App;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
-use MainApp\Application\Middleware\JwtMiddleware;
-use MainApp\Application\Config\Config;
 
 return function (App $app) {
  
@@ -27,7 +29,7 @@ return function (App $app) {
     $app->group('/api', function (Group $api) {
 		$api->group('/v1', function (Group $v1) {
 			
-			$v1->group('/imap-search', function (Group $imapsearch,) {
+			$v1->group('/imap-search', function (Group $imapsearch) {
 				// Speichern einer neuen Query
 				$imapsearch->post('/save', function (Request $request, Response $response) {
 					/** @var ImapSearchController $controller */
@@ -210,25 +212,12 @@ return function (App $app) {
 			});
 
 			$v1->group('/imap-accounts', function (Group $imapaccounts) {
-
-				$imapaccounts->get('/list', function (Request $request, Response $response) {
-					$db = new DbController();
+				$imapaccounts->get('/list', GetImapAccountsAction::class);
 				
-					
-					$logger = $this->get(LoggerInterface::class);
-					$imapCredantialController = new ImapCredentialsController($db, $logger);
-					if (!LoginController::isLoggedIn()) {
-						$response->getBody()->write(json_encode(['error' => 'Not logged in']));
-						return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
-					}
 				
-					$account=$imapCredantialController->getAccountsByUser($_SESSION['userID']);
-					
-					$response->getBody()->write(json_encode($account));
-					return $response->withHeader('Content-Type', 'application/json');
-				});
+				$imapaccounts->delete('/delete/{id}', DeleteImapAccountAction::class);
 
-				$imapaccounts->delete('/delete/{id}', function (Request $request, Response $response, array $args) {
+				$imapaccounts->delete('/_delete/{id}', function (Request $request, Response $response, array $args) {
 					
 					$db = new DbController();
 					
@@ -342,5 +331,5 @@ return function (App $app) {
 				});
 			});
 		});
-	})->add($jwtMiddleware);
+	});
 };	

@@ -61,12 +61,10 @@ $middleware = require __DIR__ . '/../app/middleware.php';
 $middleware($app);
 
 // Register routes
-$routesfrontend = require __DIR__ . '/../app/frontend/routes.php';
-$routesfrontend($app);
-
-$routesbackend= require __DIR__ . '/../app/backend/routes.php';
-$routesbackend($app);
-
+$routesBackend = require __DIR__ . '/../backend/routes.php';
+$routesBackend($app);
+$routesFrontend = require __DIR__ . '/../frontend/routes.php';
+$routesFrontend($app);
  
 /** @var SettingsInterface $settings */
 $settings = $container->get(SettingsInterface::class);

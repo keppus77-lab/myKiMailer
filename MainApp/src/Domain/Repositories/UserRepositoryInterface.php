@@ -8,4 +8,5 @@ use MainApp\Domain\Entities\User;
 
 interface UserRepositoryInterface {
     public function findByEmailWithRequestCount(string $email, int $sinceTimestamp): ?array;
+    public function findByUsername(string $username): ?User;
 }
