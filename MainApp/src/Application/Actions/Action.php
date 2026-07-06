@@ -80,6 +80,15 @@ abstract class Action
         return $this->respond($payload);
     }
 
+    protected function renderJson(array $data, int $status = 200): Response
+    {
+        $this->response->getBody()->write(json_encode($data));
+        
+        return $this->response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus($status);
+    }
+
     protected function respond(ActionPayload $payload): Response
     {
         $json = json_encode($payload, JSON_PRETTY_PRINT);

@@ -6,17 +6,18 @@ namespace MainApp\Application\Container;
 use MainApp\Application\Config\Config;
 use MainApp\Application\Services\AuthenticationService;
 use MainApp\Application\Services\CookieManagerInterface;
+use MainApp\Application\Services\PasswordEncryptionServiceInterface;
 use MainApp\Application\Services\SessionManagerInterface;
 use MainApp\Application\UseCases\CheckAuthenticationUseCase;
 use MainApp\Application\UseCases\CreateImapAccountUseCase;
-
+use MainApp\Application\UseCases\DeleteImapAccountUseCase;
 use MainApp\Application\UseCases\GetUserImapAccountsUseCase;
+use MainApp\Application\UseCases\GetUserImapAccountUseCase;
 use MainApp\Application\UseCases\LogoutUseCase;
 use MainApp\Application\UseCases\UpdateImapAccountUseCase;
 use MainApp\Domain\Repositories\ImapAccountRepositoryInterface;
 use MainApp\Domain\Repositories\UserRepositoryInterface;
 use MainApp\Domain\Services\CsrfTokenServiceInterface;
-use MainApp\Domain\Services\PasswordEncryptionServiceInterface;
 use MainApp\Infrastructure\Database\DatabaseInterface;
 use MainApp\Infrastructure\Database\MySQLDatabase;
 use MainApp\Infrastructure\Repositories\ImapAccountRepository;
@@ -24,8 +25,6 @@ use MainApp\Infrastructure\Services\AesPasswordEncryptionService;
 use MainApp\Infrastructure\Services\CsrfTokenService;
 use MainApp\Infrastructure\Services\PhpCookieManager;
 use MainApp\Infrastructure\Services\PhpSessionManager;
-
-use MainApp\Application\UseCases\DeleteImapAccountUseCase;
 
 
 class ServiceContainer {
@@ -110,6 +109,25 @@ class ServiceContainer {
 
         $this->services[DeleteImapAccountUseCase::class] = function() {
             return new DeleteImapAccountUseCase(
+                $this->get(ImapAccountRepositoryInterface::class)
+            );
+        };
+
+        $this->services[GetUserImapAccountUseCase::class] = function() {
+            return new GetUserImapAccountUseCase(
+                $this->get(ImapAccountRepositoryInterface::class)
+            );
+        };
+
+        $this->services[CreateImapAccountUseCase::class] = function() {
+            return new CreateImapAccountUseCase(
+                $this->get(ImapAccountRepositoryInterface::class),
+                $this->get(PasswordEncryptionServiceInterface::class)   
+            );
+        };
+
+        $this->services[GetUserImapAccountsUseCase::class] = function() {
+            return new GetUserImapAccountsUseCase(
                 $this->get(ImapAccountRepositoryInterface::class)
             );
         };

@@ -1,0 +1,5 @@
+[2026-07-04T18:00:13.903018+02:00] slim-app.ERROR: Failed to create IMAP account: An IMAP account with this email already exists [] {"uid":"223da65"}
+[2026-07-04T18:05:56.854652+02:00] slim-app.ERROR: Failed to create IMAP account: An IMAP account with this email already exists [] {"uid":"3774345"}
+[2026-07-04T18:08:52.608408+02:00] slim-app.ERROR: Failed to create IMAP account: An IMAP account with this email already exists [] {"uid":"ff95722"}
+[2026-07-04T18:19:49.183087+02:00] slim-app.ERROR: Failed to create IMAP account: An IMAP account with this email already exists [] {"uid":"17aec01"}
+[2026-07-04T18:29:45.878584+02:00] slim-app.ERROR: Failed to create IMAP account: An IMAP account with this email already exists [] {"uid":"40fb3db"}

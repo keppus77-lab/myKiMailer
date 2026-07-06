@@ -70,7 +70,7 @@ class CreateImapAccountRequest {
         if (empty($this->csrfToken)) {
             $this->errors['csrf_token'] = 'CSRF token is required';
         }
-
+error_log('CreateImapAccountRequest: Validation errors: ' . json_encode($this->errors));
         return empty($this->errors);
     }
 

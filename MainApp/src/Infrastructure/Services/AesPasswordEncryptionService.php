@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MainApp\Infrastructure\Services;
 
-use MainApp\Domain\Services\PasswordEncryptionServiceInterface;
+use MainApp\Application\Services\PasswordEncryptionServiceInterface;
 
 class AesPasswordEncryptionService implements PasswordEncryptionServiceInterface {
     

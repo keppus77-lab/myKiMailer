@@ -59,12 +59,5 @@ class DeleteImapAccountAction extends BaseProtectedAction
         }
     
     }
-    protected function renderJson(array $data, int $status = 200): Response
-    {
-        $this->response->getBody()->write(json_encode($data));
-        
-        return $this->response
-            ->withHeader('Content-Type', 'application/json')
-            ->withStatus($status);
-    }
+  
 }

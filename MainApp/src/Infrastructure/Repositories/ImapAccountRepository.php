@@ -61,7 +61,7 @@ class ImapAccountRepository implements ImapAccountRepositoryInterface {
 
     public function findByIdAndUserId(int $accountId, int $userId): ?ImapAccount {
         $result = $this->database->select(
-            'SELECT id, user_id, email, imap_host, imap_port, imap_password_encrypted, encryption_iv, is_active, created_at, updated_at 
+            'SELECT id, user_id, email, imap_host, imap_port, imap_password_encrypted, encryption_iv, use_ssl, is_active, created_at, updated_at 
             FROM imap_accounts 
             WHERE id = ? AND user_id = ?',
             'ii',
@@ -97,14 +97,15 @@ class ImapAccountRepository implements ImapAccountRepositoryInterface {
     public function update(ImapAccount $account): bool {
         return $this->database->update(
             'UPDATE imap_accounts 
-            SET email = ?, imap_host = ?, imap_port = ?, imap_password_encrypted = ?, encryption_iv = ?, is_active = ? 
+            SET email = ?, imap_host = ?, imap_port = ?, imap_password_encrypted = ?, encryption_iv = ?, use_ssl = ?, is_active = ? 
             WHERE id = ?',
-            'ssiisii',
+            'ssiisiii',
             $account->getEmail(),
             $account->getHost(),
             $account->getPort(),
             $account->getEncryptedPassword(),
             $account->getEncryption(),
+            $account->getUseSsl() ? 1 : 0,
             $account->isActive() ? 1 : 0,
             $account->getId()
         );
@@ -137,7 +138,8 @@ error_log('Mapping row to ImapAccount: ' . json_encode($row));
             $row['imap_host'],
             (int)$row['imap_port'],
             $row['imap_password_encrypted'],
-            $row['encryption_iv'] ?? 'ssl',
+            $row['encryption_iv'],
+            (bool)($row['use_ssl'] ?? true),
             (bool)($row['is_active'] ?? true),
             $row['created_at'] ? new \DateTime($row['created_at']) : null,
             $row['updated_at'] ? new \DateTime($row['updated_at']) : null

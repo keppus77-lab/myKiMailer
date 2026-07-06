@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 
-use MainAppBackend\Application\Actions\DeleteImapAccountAction;
 use MainApp\Application\Config\Config;
 use MainApp\Application\Controllers\DbController;
 use MainApp\Application\Controllers\ImapCredentialsController;
@@ -11,7 +10,11 @@ use MainApp\Application\Controllers\ImapSearchController;
 use MainApp\Application\Controllers\LoginController;
 use MainApp\Application\Controllers\TokenController;
 use MainApp\Application\Middleware\JwtMiddleware;
+use MainAppBackend\Application\Actions\CreateImapAccountAction;
+use MainAppBackend\Application\Actions\DeleteImapAccountAction;
+use MainAppBackend\Application\Actions\GetImapAccountAction;
 use MainAppBackend\Application\Actions\GetImapAccountsAction;
+use MainAppBackend\Application\Actions\SaveImapAccountAction;
 use Psr\Log\LoggerInterface;
 use Slim\App;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
@@ -213,14 +216,16 @@ return function (App $app) {
 
 			$v1->group('/imap-accounts', function (Group $imapaccounts) {
 				$imapaccounts->get('/list', GetImapAccountsAction::class);
-				
-				
+							
 				$imapaccounts->delete('/delete/{id}', DeleteImapAccountAction::class);
 
-				$imapaccounts->delete('/_delete/{id}', function (Request $request, Response $response, array $args) {
-					
+				$imapaccounts->post('/save', CreateImapAccountAction::class);
+
+				$imapaccounts->get('/get/{id}', GetImapAccountAction::class);
+				
+				$imapaccounts->get('/ge_t/{id}', function (Request $request, Response $response, array $args) {
 					$db = new DbController();
-					
+				
 					$id = (int) $args['id'];
 					
 					$logger = $this->get(LoggerInterface::class);
@@ -229,48 +234,14 @@ return function (App $app) {
 						$response->getBody()->write(json_encode(['error' => 'Not logged in']));
 						return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
 					}
-				
-					$account=$imapCredantialController->deleteAccount($_SESSION['userID'], $id);
-					if($account===true){
-						$return=['success' => 1];
-
-					}
-					else{
-						$return =['error' => 1];
-
-					}
-					$response->getBody()->write(json_encode($return));
-					return $response->withHeader('Content-Type', 'application/json');
-
-				});
-
-				$imapaccounts->post('/save', function (Request $request, Response $response) {
-					$db = new DbController();
-				
+					$account = $imapCredantialController->getAccount($_SESSION['userID'], $id);
 					
-					$logger = $this->get(LoggerInterface::class);
-					$imapCredantialController = new ImapCredentialsController($db, $logger);
-					if (!LoginController::isLoggedIn()) {
-						$response->getBody()->write(json_encode(['error' => 'Not logged in']));
-						return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
-					}
-					$data = $request->getParsedBody();
-					$account = json_encode($data);
-						$account=$imapCredantialController->saveAccount(
-							$_SESSION['userID'],
-							$data['email'],
-							$data['host'],
-							$data['password'],
-							$data['username'],
-							$data['use_ssl'],
-							$data['port']
-						);
 				
 					$response->getBody()->write(json_encode($account));
 					return $response->withHeader('Content-Type', 'application/json');
 
 				});
-
+				
 				$imapaccounts->get('/test/{id}', function (Request $request, Response $response, array $args) {
 					$db = new DbController();
 				
@@ -290,24 +261,7 @@ return function (App $app) {
 
 				});
 			
-				$imapaccounts->get('/get/{id}', function (Request $request, Response $response, array $args) {
-					$db = new DbController();
 				
-					$id = (int) $args['id'];
-					
-					$logger = $this->get(LoggerInterface::class);
-					$imapCredantialController = new ImapCredentialsController($db, $logger);
-					if (!LoginController::isLoggedIn()) {
-						$response->getBody()->write(json_encode(['error' => 'Not logged in']));
-						return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
-					}
-					$account = $imapCredantialController->getAccount($_SESSION['userID'], $id);
-					
-				
-					$response->getBody()->write(json_encode($account));
-					return $response->withHeader('Content-Type', 'application/json');
-
-				});
 
 				$imapaccounts->put('/update/{id}', function (Request $request, Response $response, array $args) {
 					$db = new DbController();

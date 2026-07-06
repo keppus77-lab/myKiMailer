@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MainApp\Domain\Services;
+namespace MainApp\Application\Services;
 
 interface PasswordEncryptionServiceInterface {
     

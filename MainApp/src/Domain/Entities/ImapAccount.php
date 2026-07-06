@@ -11,6 +11,7 @@ class ImapAccount {
     private string $email;
     private string $host;
     private int $port;
+    private bool $use_ssl;
     private string $encryptedPassword;
     private string $encryption; // ssl, tls, none
     private bool $active;
@@ -24,7 +25,8 @@ class ImapAccount {
         string $host,
         int $port,
         string $encryptedPassword,
-        string $encryption = 'ssl',
+        string $encryption,
+        bool $use_ssl,
         bool $active = true,
         ?\DateTime $createdAt = null,
         ?\DateTime $lastChecked = null
@@ -36,6 +38,7 @@ class ImapAccount {
         $this->port = $port;
         $this->encryptedPassword = $encryptedPassword;
         $this->encryption = $encryption;
+        $this->use_ssl = $use_ssl;
         $this->active = $active;
         $this->createdAt = $createdAt;
         $this->lastChecked = $lastChecked;
@@ -60,6 +63,10 @@ class ImapAccount {
 
     public function getPort(): int {
         return $this->port;
+    }
+
+        public function getUseSsl(): bool {
+        return $this->use_ssl;
     }
 
     public function getEncryptedPassword(): string {
@@ -92,6 +99,7 @@ class ImapAccount {
             'host' => $this->host,
             'port' => $this->port,
             'encryption' => $this->encryption,
+            'use_ssl' => $this->use_ssl,
             'active' => $this->active,
             'created_at' => $this->createdAt?->format('Y-m-d H:i:s'),
             'last_checked' => $this->lastChecked?->format('Y-m-d H:i:s')

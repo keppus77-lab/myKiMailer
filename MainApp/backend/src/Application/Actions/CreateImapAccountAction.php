@@ -15,9 +15,13 @@ class CreateImapAccountAction extends BaseProtectedAction
     {         
         $postData = $this->request->getParsedBody();
         
+        error_log('CreateImapAccountAction: Received POST data: ' . json_encode($postData));
+
         // Validate input
         $dto = new CreateImapAccountRequest($postData);
-        
+
+        error_log('CreateImapAccountAction: Validating input data: ' . json_encode($dto));
+
         if (!$dto->isValid()) {
             return $this->renderJson([
                 'success' => false,
@@ -28,6 +32,8 @@ class CreateImapAccountAction extends BaseProtectedAction
         // Create account
         $useCase = $this->container->get(CreateImapAccountUseCase::class);
         
+error_log('CreateImapAccountAction: Executing use case with data: ' . json_encode($dto));
+die();        
         try {
             $account = $useCase->execute(
                 $this->getCurrentUserId(),
