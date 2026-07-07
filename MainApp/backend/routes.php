@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 
+use MainApp\Application\Actions\ImapAccounts\UpdateImapAccountAction;
 use MainApp\Application\Config\Config;
 use MainApp\Application\Controllers\DbController;
 use MainApp\Application\Controllers\ImapCredentialsController;
@@ -14,7 +15,15 @@ use MainAppBackend\Application\Actions\CreateImapAccountAction;
 use MainAppBackend\Application\Actions\DeleteImapAccountAction;
 use MainAppBackend\Application\Actions\GetImapAccountAction;
 use MainAppBackend\Application\Actions\GetImapAccountsAction;
+use MainAppBackend\Application\Actions\ImapAccounts\TestImapConnectionAction;
 use MainAppBackend\Application\Actions\SaveImapAccountAction;
+use MainAppBackend\Application\Actions\SaveImapSearchAction;
+use MainAppBackend\Application\Actions\UpdateImapSearchAction;
+use MainAppBackend\Application\Actions\GetImapSearchAction;
+use MainAppBackend\Application\Actions\ListImapSearchAction;
+use MainAppBackend\Application\Actions\DeleteImapSearchAction;
+use MainAppBackend\Application\Middleware\CsrfMiddleware;
+use MainAppBackend\Application\Middleware\AuthenticationMiddleware;
 use Psr\Log\LoggerInterface;
 use Slim\App;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
@@ -33,6 +42,26 @@ return function (App $app) {
 		$api->group('/v1', function (Group $v1) {
 			
 			$v1->group('/imap-search', function (Group $imapsearch) {
+				// Liste aller Queries
+				$imapsearch->get('/list', ListImapSearchAction::class);
+				
+				// Einzelne Query abrufen
+				$imapsearch->get('/{id}', GetImapSearchAction::class);
+				
+				// Neue Query speichern
+				$imapsearch->post('/save', SaveImapSearchAction::class);
+				
+				// Query aktualisieren
+				$imapsearch->put('/{id}', UpdateImapSearchAction::class);
+				
+				// Query löschen
+				$imapsearch->delete('/{id}', DeleteImapSearchAction::class);
+				
+			});
+
+
+
+			$v1->group('/imap-search_', function (Group $imapsearch) {
 				// Speichern einer neuen Query
 				$imapsearch->post('/save', function (Request $request, Response $response) {
 					/** @var ImapSearchController $controller */
@@ -222,67 +251,11 @@ return function (App $app) {
 				$imapaccounts->post('/save', CreateImapAccountAction::class);
 
 				$imapaccounts->get('/get/{id}', GetImapAccountAction::class);
-				
-				$imapaccounts->get('/ge_t/{id}', function (Request $request, Response $response, array $args) {
-					$db = new DbController();
-				
-					$id = (int) $args['id'];
-					
-					$logger = $this->get(LoggerInterface::class);
-					$imapCredantialController = new ImapCredentialsController($db, $logger);
-					if (!LoginController::isLoggedIn()) {
-						$response->getBody()->write(json_encode(['error' => 'Not logged in']));
-						return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
-					}
-					$account = $imapCredantialController->getAccount($_SESSION['userID'], $id);
-					
-				
-					$response->getBody()->write(json_encode($account));
-					return $response->withHeader('Content-Type', 'application/json');
-
-				});
-				
-				$imapaccounts->get('/test/{id}', function (Request $request, Response $response, array $args) {
-					$db = new DbController();
-				
-					$id = (int) $args['id'];
-					
-					$logger = $this->get(LoggerInterface::class);
-					$imapCredantialController = new ImapCredentialsController($db, $logger);
-					if (!LoginController::isLoggedIn()) {
-						$response->getBody()->write(json_encode(['error' => 'Not logged in']));
-						return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
-					}
-					$testConnection = $imapCredantialController->testConnection($_SESSION['userID'], $id);
-					
-				
-					$response->getBody()->write(json_encode($testConnection));
-					return $response->withHeader('Content-Type', 'application/json');
-
-				});
+							
+				$imapaccounts->get('/test/{id}', TestImapConnectionAction::class);
 			
-				
-
-				$imapaccounts->put('/update/{id}', function (Request $request, Response $response, array $args) {
-					$db = new DbController();
-				
-					$id = (int) $args['id'];
-					$data = $request->getParsedBody();
-					$data['id'] = $id;
-					$logger = $this->get(LoggerInterface::class);
-					$imapCredantialController = new ImapCredentialsController($db, $logger);
-					if (!LoginController::isLoggedIn()) {
-						$response->getBody()->write(json_encode(['error' => 'Not logged in']));
-						return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
-					}
-					$update = $imapCredantialController->updateAccount($_SESSION['userID'], $data);
-
-					
-				
-					$response->getBody()->write(json_encode($update));
-					return $response->withHeader('Content-Type', 'application/json');
-
-				});
+				$imapaccounts->put('/update/{id}', UpdateImapAccountAction::class);
+			
 			});
 		});
 	});

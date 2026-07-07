@@ -14,7 +14,10 @@ use MainApp\Application\UseCases\DeleteImapAccountUseCase;
 use MainApp\Application\UseCases\GetUserImapAccountsUseCase;
 use MainApp\Application\UseCases\GetUserImapAccountUseCase;
 use MainApp\Application\UseCases\LogoutUseCase;
+use MainApp\Application\UseCases\TestStoredImapConnectionUseCase;
 use MainApp\Application\UseCases\UpdateImapAccountUseCase;
+use MainApp\Domain\ImapSearchQuery;
+use MainApp\Domain\ImapSearchQueryRepositoryInterface;
 use MainApp\Domain\Repositories\ImapAccountRepositoryInterface;
 use MainApp\Domain\Repositories\UserRepositoryInterface;
 use MainApp\Domain\Services\CsrfTokenServiceInterface;
@@ -131,6 +134,21 @@ class ServiceContainer {
                 $this->get(ImapAccountRepositoryInterface::class)
             );
         };
+
+        $this->services[TestStoredImapConnectionUseCase::class] = function() {
+            return new TestStoredImapConnectionUseCase(
+                $this->get(ImapAccountRepositoryInterface::class),
+                $this->get(PasswordEncryptionServiceInterface::class),
+                15 // Timeout in seconds
+            );
+        };
+
+    $this->services[ImapSearchQueryRepositoryInterface::class] = function() {
+            return new MySQLImapSearchQueryRepository(
+                $this->get(DatabaseInterface::class)
+            );
+        };
+        
 
     }
 

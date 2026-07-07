@@ -6,7 +6,7 @@ namespace MainApp\Application\UseCases;
 
 use MainApp\Domain\Entities\ImapAccount;
 use MainApp\Domain\Repositories\ImapAccountRepositoryInterface;
-use MainApp\Domain\Services\PasswordEncryptionServiceInterface;
+use MainApp\Application\Services\PasswordEncryptionServiceInterface;
 
 class UpdateImapAccountUseCase {
     
@@ -42,7 +42,8 @@ class UpdateImapAccountUseCase {
         string $host,
         int $port,
         ?string $password,
-        string $encryption = 'ssl',
+        string $encryption,
+        bool $use_ssl,
         bool $active = true
     ): ImapAccount {
         
@@ -67,6 +68,7 @@ class UpdateImapAccountUseCase {
             $port,
             $encryptedPassword,
             $encryption,
+            $use_ssl,
             $active,
             $existingAccount->getCreatedAt(),
             $existingAccount->getLastChecked()
