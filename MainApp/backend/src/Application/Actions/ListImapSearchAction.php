@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace MainAppBackend\Application\Actions;
 
 use MainApp\Application\Actions\Action;
+use MainApp\Application\Actions\BaseProtectedAction;
+
 use MainApp\Application\UseCases\ListImapSearchQueriesUseCase;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
 use Slim\Exception\HttpUnauthorizedException;
 
-class ListImapSearchAction extends Action
+class ListImapSearchAction extends BaseProtectedAction
 {
     private ListImapSearchQueriesUseCase $useCase;
 
@@ -22,10 +24,10 @@ class ListImapSearchAction extends Action
         $this->useCase = $useCase;
     }
 
-    protected function action(): Response
+    protected function protectedAction(): Response
     {
-        $userId = $this->getAuthenticatedUserId();
-
+        $userId = $this->getCurrentUserId();
+error_log("ListImapSearchAction: userId = $userId");
         $queries = $this->useCase->execute($userId);
 
         return $this->respondWithData([
@@ -34,14 +36,5 @@ class ListImapSearchAction extends Action
         ]);
     }
 
-    private function getAuthenticatedUserId(): int
-    {
-        $userId = $this->request->getAttribute('user_id') ?? $_SESSION['userID'] ?? null;
-        
-        if (!$userId) {
-            throw new HttpUnauthorizedException($this->request, 'Not authenticated');
-        }
-
-        return (int)$userId;
-    }
+    
 }

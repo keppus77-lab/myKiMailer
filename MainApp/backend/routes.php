@@ -46,7 +46,7 @@ return function (App $app) {
 				$imapsearch->get('/list', ListImapSearchAction::class);
 				
 				// Einzelne Query abrufen
-				$imapsearch->get('/{id}', GetImapSearchAction::class);
+				$imapsearch->get('list/{id}', GetImapSearchAction::class);
 				
 				// Neue Query speichern
 				$imapsearch->post('/save', SaveImapSearchAction::class);

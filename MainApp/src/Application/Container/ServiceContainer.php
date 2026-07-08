@@ -23,6 +23,7 @@ use MainApp\Domain\Repositories\UserRepositoryInterface;
 use MainApp\Domain\Services\CsrfTokenServiceInterface;
 use MainApp\Infrastructure\Database\DatabaseInterface;
 use MainApp\Infrastructure\Database\MySQLDatabase;
+use MainApp\Infrastructure\Persistence\MySQLImapSearchQueryRepository;
 use MainApp\Infrastructure\Repositories\ImapAccountRepository;
 use MainApp\Infrastructure\Services\AesPasswordEncryptionService;
 use MainApp\Infrastructure\Services\CsrfTokenService;
@@ -145,7 +146,7 @@ class ServiceContainer {
 
     $this->services[ImapSearchQueryRepositoryInterface::class] = function() {
             return new MySQLImapSearchQueryRepository(
-                $this->get(DatabaseInterface::class)
+                $this->get(DatabaseInterface::class)->getConnection()
             );
         };
         

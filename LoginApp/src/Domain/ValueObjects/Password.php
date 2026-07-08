@@ -20,7 +20,7 @@ class Password {
         return $this->value;
     }
 
-    public function hash(int $algorithm = PASSWORD_DEFAULT): string {
+    public function hash(int|string|null $algorithm = null): string {
         return password_hash($this->value, $algorithm);
     }
 

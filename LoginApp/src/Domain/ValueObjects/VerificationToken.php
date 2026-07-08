@@ -19,7 +19,12 @@ class VerificationToken {
         return $this->rawToken;
     }
 
-    public function hash(string $algorithm): string {
+    public function hash(string|int|null $algorithm): string {
+
+        if (is_string($algorithm)) {
+            $algorithm = constant($algorithm);
+        }
+
         return password_hash($this->rawToken, $algorithm);
     }
 

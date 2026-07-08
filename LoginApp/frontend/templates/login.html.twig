@@ -86,7 +86,7 @@ async function request(url, data, callback) {
     try {
         // FormData vorbereiten
         const formData = prepareFormData(data);
-  
+  alert(url);
         // CSRF-Token hinzufügen
         addCsrfToken(formData);
 

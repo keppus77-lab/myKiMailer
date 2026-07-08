@@ -15,6 +15,21 @@ use LoginApp\Domain\ValueObjects\Password;
 use LoginApp\Domain\ValueObjects\RegistrationData;
 use LoginApp\Infrastructure\Services\EmailService;
 
+/**
+ * Registration Error Codes:
+ * 
+ * 0  - Success
+ * 1  - Invalid name format
+ * 2  - Invalid email format
+ * 3  - Invalid email domain (no MX record)
+ * 4  - Password does not meet requirements
+ * 5  - Password confirmation mismatch
+ * 6  - Database error (failed to create user)
+ * 7  - Email already in use
+ * 8  - Failed to connect to database (deprecated)
+ * 9  - Invalid CSRF token  
+ * 10+ - Email verification errors (original code + 9)
+ */
 class RegisterUserUseCase {
     
     private RegistrationService $registrationService;
@@ -51,6 +66,10 @@ class RegisterUserUseCase {
     ): array {
         $errors = [];
 
+        $name = null;
+        $email = null;
+        $password = null;
+
         // Validate CSRF token first
         if (!$this->csrfService->validateToken($csrfToken)) {
             return [9]; // Invalid CSRF token
@@ -63,12 +82,14 @@ class RegisterUserUseCase {
             $errors[] = (int)$e->getCode();
         }
 
+        
         try {
             $email = new Email($emailInput);
         } catch (\InvalidArgumentException $e) {
             $errors[] = (int)$e->getCode();
         }
 
+        
         try {
             $password = new Password($passwordInput);
             
@@ -78,6 +99,7 @@ class RegisterUserUseCase {
         } catch (\InvalidArgumentException $e) {
             $errors[] = (int)$e->getCode();
         }
+        
 
         // If validation failed, return errors
         if (!empty($errors)) {
@@ -94,8 +116,8 @@ class RegisterUserUseCase {
                 $verificationData = $this->verificationService->createVerificationRequest($email->getValue());
                 
                 $verificationLink = $this->validateEmailEndpoint . '/' . 
-                                  $verificationData['request_id'] . '/' . 
-                                  $verificationData['token']->urlSafeEncode();
+                    $verificationData['request_id'] . '/' . 
+                    $verificationData['token']->urlSafeEncode();
                 
                 $emailBody = '<a href="' . htmlspecialchars($verificationLink) . '">Click this link to verify your email</a>';
 

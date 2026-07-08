@@ -27,6 +27,9 @@ class IpAddress {
     }
 
     public static function fromServer(): self {
+        if ($_SERVER['REMOTE_ADDR']=="::1") {
+            return new self('127.0.0.1');        
+        }
         return new self($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
     }
 }

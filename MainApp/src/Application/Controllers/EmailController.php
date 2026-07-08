@@ -11,28 +11,28 @@ class EmailController{
         $config = Config::getInstance();
 		try {
 	    //Server settings
-	    $mail->isSMTP();
-	    $mail->Host       = $config->get('SMTP_HOST');
-	    $mail->SMTPAuth   = true;
-	    $mail->Username   = $config->get('SMTP_USERNAME');
-	    $mail->Password   = $config->get('SMTP_PASSWORD');
-	    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-	    $mail->Port       = $config->get('SMTP_PORT');
+			$mail->isSMTP();
+			$mail->Host       = $config->get('SMTP_HOST');
+			$mail->SMTPAuth   = true;
+			$mail->Username   = $config->get('SMTP_USERNAME');
+			$mail->Password   = $config->get('SMTP_PASSWORD');
+			$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+			$mail->Port       = $config->get('SMTP_PORT');
 
 
 
 
 	    //Recipients
-	    $mail->setFrom($config->get('SMTP_FROM'), $config->get('SMTP_FROM_NAME'));
-	    $mail->addAddress($to, $toName);
+			$mail->setFrom($config->get('SMTP_FROM'), $config->get('SMTP_FROM_NAME'));
+			$mail->addAddress($to, $toName);
 
-	    // Content
-	    $mail->isHTML(true);
-	    $mail->Subject = $subj;
-	    $mail->Body    = $msg;
+			// Content
+			$mail->isHTML(true);
+			$mail->Subject = $subj;
+			$mail->Body    = $msg;
 
-	    $mail->send();
-	    return true;
+			$mail->send();
+			return true;
 		} 
 		catch(Exception $e) {
             echo $e->getMessage();

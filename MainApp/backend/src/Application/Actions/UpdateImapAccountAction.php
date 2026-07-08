@@ -7,7 +7,7 @@ namespace MainApp\Application\Actions\ImapAccounts;
 use MainApp\Application\Actions\BaseProtectedAction;
 use MainApp\Application\UseCases\UpdateImapAccountUseCase;
 use MainApp\Application\DTOs\UpdateImapAccountRequest;
-use LoginApp\Domain\Services\CsrfTokenServiceInterface;
+use MainApp\Domain\Services\CsrfTokenServiceInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 
 class UpdateImapAccountAction extends BaseProtectedAction

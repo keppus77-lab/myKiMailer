@@ -478,7 +478,7 @@ async function saveQuery() {
 // Query laden
 async function loadQuery(id) {
     try {
-        const response = await fetch(`api/v1/imap-search/load/${id}`);
+        const response = await fetch(`api/v1/imap-search/list/${id}`);
         const query = await response.json();
         
         if (query.error) {
@@ -744,9 +744,9 @@ function displayQueryList_(queries) {
 
 function displayQueryList(queries) {
     const container = document.getElementById('queryListContainer');
-    
+    let q=queries.data.queries;
     // Wenn keine Queries vorhanden
-    if (queries.length === 0) {
+    if (q.length === 0) {
         container.innerHTML = `
             <div class="query-modal">
                 <div class="query-modal-header">
@@ -777,7 +777,7 @@ function displayQueryList(queries) {
         `;
     } else {
         // Mit Queries
-        const queryItems = queries.map(q => {
+        const queryItems = q.map(q => {
             const createdDate = new Date(q.created_at);
             const timeAgo = getTimeAgo(createdDate);
             

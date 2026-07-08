@@ -15,6 +15,7 @@ use Slim\Views\TwigMiddleware;
 
 session_start();
 
+
 require __DIR__ . '/../vendor/autoload.php';
 
 // Instantiate PHP-DI ContainerBuilder

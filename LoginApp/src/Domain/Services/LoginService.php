@@ -9,7 +9,7 @@ use LoginApp\Domain\ValueObjects\Credentials;
 use LoginApp\Domain\ValueObjects\IpAddress;
 use LoginApp\Domain\Repositories\UserRepositoryInterface;
 use LoginApp\Domain\Repositories\LoginAttemptRepositoryInterface;
-use LoginApp\Domain\Exceptions\LoginException;
+use LoginApp\Domain\Services\LoginException;
 
 class LoginService {
     

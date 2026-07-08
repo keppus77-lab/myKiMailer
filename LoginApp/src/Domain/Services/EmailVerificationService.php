@@ -15,13 +15,13 @@ class EmailVerificationService {
     private UserRepositoryInterface $userRepository;
     private EmailVerificationRequestRepositoryInterface $requestRepository;
     private int $maxRequestsPerDay;
-    private string $passwordAlgorithm;
+    private int|string $passwordAlgorithm;
 
     public function __construct(
         UserRepositoryInterface $userRepository,
         EmailVerificationRequestRepositoryInterface $requestRepository,
         int $maxRequestsPerDay,
-        string $passwordAlgorithm
+        int|string|null $passwordAlgorithm = null
     ) {
         $this->userRepository = $userRepository;
         $this->requestRepository = $requestRepository;

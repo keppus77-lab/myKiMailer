@@ -40,6 +40,7 @@ class RegisterAction extends Action
         $csrfService = $this->container->get(CsrfTokenServiceInterface::class);
         $token = $csrfService->generateToken();
         
+    
         // Render template
         $view = Twig::fromRequest($this->request);
         $config = Config::getInstance();

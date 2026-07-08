@@ -120,7 +120,7 @@ class ServiceContainer {
                 $this->get(UserRepositoryInterface::class),
                 $this->get(EmailVerificationRequestRepositoryInterface::class),
                 $this->config->get('MAX_EMAIL_VERIFICATION_REQUESTS_PER_DAY'),
-                $this->config->get('PASSWORD_DEFAULT')
+                $this->config->get('PASSWORD_ALGORITHM')
             );
         };
 
